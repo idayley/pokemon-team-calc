@@ -1,22 +1,74 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import TypeBadge from '../Shared/TypeBadge';
-import { Shield, Swords } from 'lucide-react';
+import { Shield, Swords, Scale } from 'lucide-react';
+import SpeedComparison from './SpeedComparison'; 
 
 const BattleRecommendation = ({ team, opponent, TypeChart }) => {
+  const typeEffectiveness = useMemo(() => {
+    if (!opponent) return {
+      quad: [],
+      double: [],
+      neutral: [],
+      half: [],
+      quarter: [],
+      zero: []
+    };
+
+    // Calculate effectiveness multipliers for each type
+    const effectiveness = {};
+    
+    Object.keys(TypeChart).forEach(attackType => {
+      let multiplier = 1;
+      
+      // Calculate effectiveness against each of opponent's types
+      opponent.types.forEach(defenseType => {
+        if (TypeChart[attackType].strengths.includes(defenseType)) {
+          multiplier *= 2;
+        }
+        if (TypeChart[attackType].weaknesses.includes(defenseType)) {
+          multiplier *= 0.5;
+        }
+      });
+      
+      effectiveness[attackType] = multiplier;
+    });
+
+    // Group types by effectiveness
+    const grouped = {
+      quad: [], // 4x damage
+      double: [], // 2x damage
+      neutral: [], // 1x damage
+      half: [], // 0.5x damage
+      quarter: [], // 0.25x damage
+      zero: [] // 0x damage (immunities)
+    };
+
+    Object.entries(effectiveness).forEach(([type, multiplier]) => {
+      if (multiplier === 4) grouped.quad.push(type);
+      else if (multiplier === 2) grouped.double.push(type);
+      else if (multiplier === 1) grouped.neutral.push(type);
+      else if (multiplier === 0.5) grouped.half.push(type);
+      else if (multiplier === 0.25) grouped.quarter.push(type);
+      else if (multiplier === 0) grouped.zero.push(type);
+    });
+
+    return grouped;
+  }, [opponent, TypeChart]);
+
   if (!opponent) return null;
 
   // Find vulnerable Pokémon against the opponent
   const getVulnerablePokemon = () => {
     return team
       .map(pokemon => {
-        // Calculate how many of the opponent's types are super effective against this Pokémon
+        // Calculate how many of the opponent's types are super effective
         const vulnerabilities = opponent.types.filter(oppType => 
           TypeChart[oppType]?.strengths.some(strength => 
             pokemon.types.includes(strength)
           )
         );
 
-        // Calculate if the Pokémon is doubly weak (4x damage)
+        // Calculate if the Pokémon is doubly weak
         const doubleWeakness = opponent.types.some(oppType =>
           pokemon.types.every(pokeType =>
             TypeChart[oppType]?.strengths.includes(pokeType)
@@ -34,95 +86,60 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
       .sort((a, b) => b.vulnerabilityScore - a.vulnerabilityScore);
   };
 
-  // Find the best attacking types against the opponent
-  const getTypeAdvantages = () => {
-    const advantages = [];
-    
-    Object.entries(TypeChart).forEach(([attackType, typeInfo]) => {
-      let multiplier = 1;
-      
-      opponent.types.forEach(defenseType => {
-        if (typeInfo.strengths.includes(defenseType)) {
-          multiplier *= 2;
-        }
-        if (typeInfo.weaknesses.includes(defenseType)) {
-          multiplier *= 0.5;
-        }
-      });
-      
-      advantages.push({
-        type: attackType,
-        multiplier
-      });
-    });
-
-    return advantages.sort((a, b) => b.multiplier - a.multiplier);
-  };
-
-  // Calculate defensive effectiveness for a Pokémon against the opponent's types
-  const getDefensiveEffectiveness = (pokemon) => {
-    let bestResistance = 1;
-    let bestResistanceType = '';
-
-    opponent.types.forEach(attackType => {
-      const typeInfo = TypeChart[attackType];
-      if (!typeInfo) return;
-
-      let resistance = 1;
-      pokemon.types.forEach(defenseType => {
-        if (typeInfo.weaknesses.includes(defenseType)) {
-          resistance *= 0.5; // Resistant
-        }
-        if (typeInfo.strengths.includes(defenseType)) {
-          resistance *= 2; // Weak
-        }
-      });
-
-      if (resistance < bestResistance) {
-        bestResistance = resistance;
-        bestResistanceType = attackType;
-      }
-    });
-
-    return {
-      resistance: bestResistance,
-      type: bestResistanceType
-    };
-  };
-
   const getBestDefenders = () => {
-    return team.map(pokemon => ({
-      pokemon,
-      ...getDefensiveEffectiveness(pokemon)
-    }))
+    return team.map(pokemon => {
+      let bestResistance = 1;
+      let bestResistanceType = '';
+
+      opponent.types.forEach(attackType => {
+        const typeInfo = TypeChart[attackType];
+        if (!typeInfo) return;
+
+        let resistance = 1;
+        pokemon.types.forEach(defenseType => {
+          if (typeInfo.weaknesses.includes(defenseType)) {
+            resistance *= 0.5; // Resistant
+          }
+          if (typeInfo.strengths.includes(defenseType)) {
+            resistance *= 2; // Weak
+          }
+        });
+
+        if (resistance < bestResistance) {
+          bestResistance = resistance;
+          bestResistanceType = attackType;
+        }
+      });
+
+      return {
+        pokemon,
+        resistance: bestResistance,
+        type: bestResistanceType
+      };
+    })
     .sort((a, b) => a.resistance - b.resistance)
     .filter(({ resistance }) => resistance < 1);
   };
 
-  const getBestAttackers = (typeAdvantages) => {
-    const matches = [];
-    
-    team.forEach(pokemon => {
-      const bestType = typeAdvantages.find(advantage => 
-        pokemon.types.includes(advantage.type)
-      );
-      
-      if (bestType) {
-        matches.push({
-          pokemon,
-          ...bestType
-        });
-      }
-    });
-
-    return matches.sort((a, b) => b.multiplier - a.multiplier);
-  };
-
-  const typeAdvantages = getTypeAdvantages();
-  const bestAttackers = getBestAttackers(typeAdvantages);
-  const bestDefenders = getBestDefenders();
   const vulnerablePokemon = getVulnerablePokemon();
-  const bestTypes = typeAdvantages.slice(0, 2);
+  const bestDefenders = getBestDefenders();
+
+  const TypeSection = ({ types, multiplier, label, className }) => {
+    if (!types.length) return null;
+    return (
+      <div className="mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Scale className="h-4 w-4" />
+          <span className={`text-sm font-medium ${className}`}>{label}</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {types.map(type => (
+            <TypeBadge key={type} type={type} small />
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -145,6 +162,46 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Add Speed Comparison here */}
+      {/* <SpeedComparison team={team} opponent={opponent} /> */}
+
+      {/* Type Effectiveness Breakdown */}
+      <div className="bg-gray-700 rounded-xl p-4">
+        <h3 className="text-lg font-semibold mb-4 text-gray-100">Type Effectiveness</h3>
+        
+        <TypeSection 
+          types={typeEffectiveness.quad}
+          label="Super Effective (4x)"
+          className="text-red-400"
+        />
+        
+        <TypeSection 
+          types={typeEffectiveness.double}
+          label="Super Effective (2x)"
+          className="text-orange-400"
+        />
+        
+        <TypeSection 
+          types={typeEffectiveness.half}
+          label="Not Very Effective (0.5x)"
+          className="text-blue-400"
+        />
+        
+        <TypeSection 
+          types={typeEffectiveness.quarter}
+          label="Not Very Effective (0.25x)"
+          className="text-blue-500"
+        />
+        
+        {typeEffectiveness.zero.length > 0 && (
+          <TypeSection 
+            types={typeEffectiveness.zero}
+            label="No Effect (0x)"
+            className="text-purple-400"
+          />
+        )}
       </div>
 
       {/* Avoid Using Section */}
@@ -183,42 +240,7 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
         </div>
       )}
 
-      {/* Best Attackers */}
-      {bestAttackers.length > 0 && (
-        <div className="bg-gray-700 rounded-xl p-4">
-          <h3 className="text-lg font-semibold mb-3 text-green-400 flex items-center gap-2">
-            <Swords className="h-5 w-5" />
-            Best Attackers
-          </h3>
-          <div className="space-y-3">
-            {bestAttackers.slice(0, 2).map(({ pokemon, type, multiplier }) => (
-              <div key={pokemon.id} className="flex items-center justify-between bg-gray-800 p-3 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={pokemon.sprites.front_default}
-                    alt={pokemon.name}
-                    className="w-12 h-12"
-                  />
-                  <div>
-                    <p className="font-medium capitalize text-gray-100">
-                      {pokemon.name}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <TypeBadge type={type} small />
-                      <span className="text-sm text-gray-400">moves</span>
-                    </div>
-                  </div>
-                </div>
-                <span className="font-medium text-green-400">
-                  {multiplier}x damage
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Defensive Options */}
+      {/* Best Defenders */}
       {bestDefenders.length > 0 && (
         <div className="bg-gray-700 rounded-xl p-4">
           <h3 className="text-lg font-semibold mb-3 text-blue-400 flex items-center gap-2">

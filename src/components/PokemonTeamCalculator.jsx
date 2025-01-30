@@ -6,6 +6,7 @@ import { TypeChart } from '../data/typeChart';
 import TeamBuilder from './TeamBuilder/TeamBuilder';
 import BattleRecommendation from './BattleStrategy/BattleRecommendation';
 import TeamRecommendations from './TeamBuilder/TeamRecommendations';
+import PokemonTeamAnalyzer from './TeamBuilder/PokemonTeamAnalyzer'; 
 import SearchInput from './Shared/SearchInput';
 import PokemonDetailsModal from './Modals/PokemonDetailsModal';
 import Header from './Header';
@@ -231,9 +232,24 @@ const PokemonTeamCalculator = () => {
             </div>
 
             {team.length > 0 && (
-              <div className="mt-6">
-                <TeamRecommendations team={team} TypeChart={TypeChart} />
-              </div>
+              <>
+                <div className="mt-6">
+                  <TeamRecommendations team={team} TypeChart={TypeChart} />
+                </div>
+                <div className="mt-6">
+                  <PokemonTeamAnalyzer 
+                    team={team}
+                    setTeam={setTeam}
+                    TypeChart={TypeChart}
+                    onSelectPokemon={setSelectedPokemon}
+                    searchPokemon={searchPokemon}
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    loading={loading}
+                    searchResults={searchResults}
+                  />
+                </div>
+              </>
             )}
           </div>
 

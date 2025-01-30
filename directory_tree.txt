@@ -1,7 +1,14 @@
 pokemon-team-calc/
 ├── .gitattributes
+├── .gitignore
 ├── all_project_code_files.xml
+├── directory_combiner.py
 ├── directory_tree.txt
+├── directory_tree_creator.py
+├── package-lock.json
+├── package.json
+├── README.md
+├── tailwind.config.js
 ├── .git/
 │   ├── COMMIT_EDITMSG
 │   ├── config
@@ -9,6 +16,7 @@ pokemon-team-calc/
 │   ├── FETCH_HEAD
 │   ├── HEAD
 │   ├── index
+│   ├── ORIG_HEAD
 │   ├── hooks/
 │   │   ├── applypatch-msg.sample
 │   │   ├── commit-msg.sample
@@ -33,53 +41,134 @@ pokemon-team-calc/
 │   │   │   │   ├── main
 │   │   │   ├── remotes/
 │   │   │   │   ├── origin/
+│   │   │   │   │   ├── gh-pages
 │   │   │   │   │   ├── main
 │   ├── objects/
 │   │   ├── 08/
 │   │   │   ├── 0d6c77ac21bb2ef88a6992b2b73ad93daaca92
 │   │   │   ├── 1d0522fdb97b27b6c2bcb7444709c585d3ee12
+│   │   ├── 0b/
+│   │   │   ├── 4ca31a97cee7b724be6d0894a70eaf3fc5804a
+│   │   ├── 11/
+│   │   │   ├── 22ebdf97fb25f64fecebf81a6154fcc43beda8
+│   │   ├── 15/
+│   │   │   ├── 48843f3b8983876f9d0c3510a96ede54dc4c79
+│   │   │   ├── b2636ca65d1a6a6e510f5f15520da3afacfb05
+│   │   ├── 16/
+│   │   │   ├── 71e9116c569df8d9864f9aa1e880261936fba6
+│   │   ├── 19/
+│   │   │   ├── 7bfd367b36d33ba4a01879b57d06e07540bdf9
+│   │   ├── 1b/
+│   │   │   ├── be2ef8fbb36a752bf83c9bbcc3100182f34664
+│   │   ├── 1c/
+│   │   │   ├── e17cbebdc21db2b10b5bf85af879839d16eade
 │   │   ├── 1f/
 │   │   │   ├── 03afeece5ac28064fa3c73a29215037465f789
+│   │   ├── 29/
+│   │   │   ├── 142944c13692b3fb42fc9543fdb09efc2ba68d
 │   │   ├── 2d/
 │   │   │   ├── fa728a97c42b68c2e4658ab2ab7dfc1eb5914c
+│   │   ├── 2e/
+│   │   │   ├── bd7f53c84b53699df84451ee809a3964faafd8
+│   │   ├── 31/
+│   │   │   ├── 75d314a7528e63755fe2f0e23cc374761b60cb
 │   │   ├── 34/
 │   │   │   ├── 68f63b2593ff96644da6ea3cb17056689a63e7
+│   │   ├── 38/
+│   │   │   ├── 39dd1e9fd0670a032b7d60e067ec21e91400ba
+│   │   ├── 41/
+│   │   │   ├── 7cef1158fa0ec1aa4de3d0663d2ca3460112a5
+│   │   ├── 44/
+│   │   │   ├── b111d0334b0f6e17eaf2cc6814eda4445f5692
+│   │   ├── 49/
+│   │   │   ├── f7206de6ca1f41ae0307a35cd64f38e16d9b39
+│   │   ├── 4c/
+│   │   │   ├── ca88c3a96020aa8dc895e33459e442dbe00017
 │   │   ├── 4d/
 │   │   │   ├── 29575de80483b005c29bfcac5061cd2f45313e
+│   │   ├── 51/
+│   │   │   ├── 0669e8daac49bd88f28651d5afc5c1162ed6a3
 │   │   ├── 52/
 │   │   │   ├── 53d3ad9e6be6690549cb255f5952337b02401d
 │   │   ├── 58/
 │   │   │   ├── beeaccd87e230076cab531b8f418f40b6d1aeb
+│   │   │   ├── bfbf83c80ef34f587931373c54b38e862b4f5a
+│   │   ├── 5a/
+│   │   │   ├── 9c46fb9227903bac89e03d7abc089f065c30a0
+│   │   ├── 5e/
+│   │   │   ├── b356b4abbdad3fb9e18fd10cf595a92b248a50
+│   │   ├── 5f/
+│   │   │   ├── 71ade671453988a56d50ca46d22fc2a4b34ee8
 │   │   ├── 62/
 │   │   │   ├── 9c9c688ad92005c783014beb7b565f9fd23e18
+│   │   ├── 67/
+│   │   │   ├── 82ddf46c30fc460a143d9f1a9e1ef5d3c26fa8
+│   │   ├── 6a/
+│   │   │   ├── 5033745b72e434d812ec9772143494192b95a5
 │   │   ├── 6f/
 │   │   │   ├── 9509c88bed7080d496fc5e1d87a9315e30549d
 │   │   ├── 75/
 │   │   │   ├── e6fd2e7c5441b09aebe04b7bef2d959ad3f31a
+│   │   ├── 7b/
+│   │   │   ├── d3fb663bf5ffd6d8dcb6b87585e719b582a951
 │   │   ├── 7e/
 │   │   │   ├── cb0da8453126a086330d8a13bfd9945ed8c1fe
+│   │   ├── 7f/
+│   │   │   ├── 02d86af70a5cbbeb49aed6ce773980875f370f
 │   │   ├── 82/
 │   │   │   ├── 83785d1ba7a26e5369b2c4cc64bcdcc68fc855
 │   │   ├── 8e/
 │   │   │   ├── 29b36dea7f04ae8729d8b33ecc05c3c9b0fe46
 │   │   ├── 8f/
 │   │   │   ├── 2609b7b3e0e3897ab3bcaad13caf6876e48699
+│   │   ├── 92/
+│   │   │   ├── 62eaa16dbfc537b4a6992552fba15daba78ad9
 │   │   ├── 95/
+│   │   │   ├── 510408fb13e8983bddb0b11772132c8f8dd002
 │   │   │   ├── c035543789924467363d57b9408c72263961c3
+│   │   ├── 96/
+│   │   │   ├── cd62c2c2c10e8d8dbe7a71710a60ff4b7841aa
+│   │   ├── 98/
+│   │   │   ├── 3976a99e17ad303d4d4044528d113ac1c3f41e
 │   │   ├── 9d/
 │   │   │   ├── fc1c058cebbef8b891c5062be6f31033d7d186
 │   │   ├── a1/
 │   │   │   ├── 1777cc471a4344702741ab1c8a588998b1311a
 │   │   ├── a4/
 │   │   │   ├── e47a6545bc15971f8f63fba70e4013df88a664
+│   │   ├── a8/
+│   │   │   ├── cd0880fec6aaf3cddcb5cc306e4b195631e2f9
 │   │   ├── aa/
 │   │   │   ├── 069f27cbd9d53394428171c3989fd03db73c76
 │   │   ├── ae/
+│   │   │   ├── 02df558a63bd1ed36fbdfc1313516257ae749d
+│   │   │   ├── 5c85801c9a98a28408e129e6be4bf2cfaf5d10
 │   │   │   ├── cb83e8c75ce1930d1661a54737a107e9493112
+│   │   ├── af/
+│   │   │   ├── 95a71f2d32f862a64395479eeb9bf3cb943c26
+│   │   ├── b5/
+│   │   │   ├── 73f0c23290a904abec15d0780d5a511ee9a6f9
+│   │   ├── b6/
+│   │   │   ├── 68f6c4672ec635f51d1549d9f90f7a23ea774a
+│   │   ├── b7/
+│   │   │   ├── 3ba1f06653048e5a635dcbe5bd7111f87d985f
+│   │   ├── b8/
+│   │   │   ├── 6f57b661a9cbd05ceb8a15940d231515811a37
+│   │   ├── ba/
+│   │   │   ├── 1563bf134ee58cf937d5ca684c980a2c1b7123
 │   │   ├── be/
 │   │   │   ├── 25b9eb1d28482b65923395d21b9cf5de160f57
+│   │   ├── c1/
+│   │   │   ├── 3b676fcaddbd7d6c6178ee727a341356716b9e
+│   │   ├── c4/
+│   │   │   ├── 56be1b52acbd68d1cf8a90f2591c1f9c4ca267
 │   │   ├── c6/
 │   │   │   ├── 163ec6c05ae4699ba68351af5000cd3796b042
+│   │   ├── c7/
+│   │   │   ├── c5748886e174d0de0998845b5cbc865ad7077a
+│   │   ├── ca/
+│   │   │   ├── bda0229731d463291e029aef3938c80e66496d
+│   │   │   ├── c213e87977fdf6f1c44be3614140ca250b5e41
 │   │   ├── d3/
 │   │   │   ├── 98c9953d7518dc6891a247ad23f82c2dbc8402
 │   │   ├── d5/
@@ -87,13 +176,28 @@ pokemon-team-calc/
 │   │   ├── d8/
 │   │   │   ├── ed7d3d52802f013942678cc6546e6b01f19011
 │   │   ├── d9/
+│   │   │   ├── 178bf712ab32ea066fa4529f69a328fd42d539
 │   │   │   ├── 47ab175d5eaf2c14e470b748f81df4baa2dbd3
 │   │   ├── df/
 │   │   │   ├── e0770424b2a19faf507a501ebfc23be8f54e7b
+│   │   ├── e3/
+│   │   │   ├── 7b46552ba3caafbdd60a26f6a4e599c20d89de
+│   │   ├── e5/
+│   │   │   ├── 17ac3d38adf376540bc6a6eaed3c98328fc39b
+│   │   ├── e6/
+│   │   │   ├── a4eaca38c233754a0a17ef4279f6bdd738d1ec
 │   │   ├── e9/
 │   │   │   ├── e57dc4d41b9b46e05112e9f45b7ea6ac0ba15e
 │   │   ├── ec/
 │   │   │   ├── 2585e8c0bb8188184ed1e0703c4c8f2a8419b0
+│   │   ├── ee/
+│   │   │   ├── 9212af2b0255f2c9d141a009c24bd3ef1494eb
+│   │   ├── ef/
+│   │   │   ├── bc77a7bcb69aceee5db85e3a5b0857d441aec4
+│   │   ├── f4/
+│   │   │   ├── 3431deade95b51dad12225f0280ff4d4a8c4d1
+│   │   ├── f7/
+│   │   │   ├── 34e18f451c1d957d34357965c7c1821bdf3969
 │   │   ├── fc/
 │   │   │   ├── 44b0a3796c0e0a64c3d858ca038bd4570465d9
 │   │   ├── info/
@@ -103,47 +207,61 @@ pokemon-team-calc/
 │   │   │   ├── main
 │   │   ├── remotes/
 │   │   │   ├── origin/
+│   │   │   │   ├── gh-pages
 │   │   │   │   ├── main
 │   │   ├── tags/
-├── pokemon-team-calc/
-│   ├── .gitignore
-│   ├── directory_combiner.py
-│   ├── directory_tree_creator.py
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── README.md
-│   ├── tailwind.config.js
-│   ├── public/
-│   │   ├── favicon.ico
-│   │   ├── index.html
-│   │   ├── logo192.png
-│   │   ├── logo512.png
-│   │   ├── manifest.json
-│   │   ├── robots.txt
-│   ├── src/
-│   │   ├── App.css
-│   │   ├── App.js
-│   │   ├── App.test.js
-│   │   ├── index.css
-│   │   ├── index.js
-│   │   ├── logo.svg
-│   │   ├── reportWebVitals.js
-│   │   ├── setupTests.js
-│   │   ├── components/
-│   │   │   ├── Header.jsx
-│   │   │   ├── PokemonTeamCalculator.jsx
-│   │   │   ├── BattleStrategy/
-│   │   │   │   ├── BattleRecommendation.jsx
-│   │   │   ├── Modals/
-│   │   │   │   ├── PokemonDetailsModal.jsx
-│   │   │   ├── Shared/
-│   │   │   │   ├── SearchInput.jsx
-│   │   │   │   ├── StatsChart.jsx
-│   │   │   │   ├── TypeBadge.jsx
-│   │   │   ├── TeamBuilder/
-│   │   │   │   ├── PokemonCard.jsx
-│   │   │   │   ├── TeamBuilder.jsx
-│   │   │   │   ├── TeamRecommendations.jsx
-│   │   ├── data/
-│   │   │   ├── typeChart.js
-│   │   │   ├── typeColors.js
+├── build/
+│   ├── asset-manifest.json
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── robots.txt
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── main.ad3be852.css
+│   │   │   ├── main.ad3be852.css.map
+│   │   ├── js/
+│   │   │   ├── 488.6088e990.chunk.js
+│   │   │   ├── 488.6088e990.chunk.js.map
+│   │   │   ├── main.ae0ef600.js
+│   │   │   ├── main.ae0ef600.js.LICENSE.txt
+│   │   │   ├── main.ae0ef600.js.map
+│   │   ├── media/
+│   │   │   ├── logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg
+├── public/
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── robots.txt
+├── src/
+│   ├── App.css
+│   ├── App.js
+│   ├── App.test.js
+│   ├── index.css
+│   ├── index.js
+│   ├── logo.svg
+│   ├── reportWebVitals.js
+│   ├── setupTests.js
+│   ├── components/
+│   │   ├── Header.jsx
+│   │   ├── PokemonTeamCalculator.jsx
+│   │   ├── BattleStrategy/
+│   │   │   ├── BattleRecommendation.jsx
+│   │   ├── Modals/
+│   │   │   ├── PokemonDetailsModal.jsx
+│   │   ├── Shared/
+│   │   │   ├── SearchInput.jsx
+│   │   │   ├── StatsChart.jsx
+│   │   │   ├── TypeBadge.jsx
+│   │   ├── TeamBuilder/
+│   │   │   ├── PokemonCard.jsx
+│   │   │   ├── PokemonTeamAnalyzer.jsx
+│   │   │   ├── TeamBuilder.jsx
+│   │   │   ├── TeamRecommendations.jsx
+│   ├── data/
+│   │   ├── typeChart.js
+│   │   ├── typeColors.js
