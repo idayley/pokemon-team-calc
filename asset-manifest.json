@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/pokemon-team-calc/static/css/main.ad3be852.css",
-    "main.js": "/pokemon-team-calc/static/js/main.ae0ef600.js",
+    "main.css": "/pokemon-team-calc/static/css/main.28f03a2e.css",
+    "main.js": "/pokemon-team-calc/static/js/main.fc21194b.js",
     "static/js/488.6088e990.chunk.js": "/pokemon-team-calc/static/js/488.6088e990.chunk.js",
     "static/media/logo.svg": "/pokemon-team-calc/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/pokemon-team-calc/index.html",
-    "main.ad3be852.css.map": "/pokemon-team-calc/static/css/main.ad3be852.css.map",
-    "main.ae0ef600.js.map": "/pokemon-team-calc/static/js/main.ae0ef600.js.map",
+    "main.28f03a2e.css.map": "/pokemon-team-calc/static/css/main.28f03a2e.css.map",
+    "main.fc21194b.js.map": "/pokemon-team-calc/static/js/main.fc21194b.js.map",
     "488.6088e990.chunk.js.map": "/pokemon-team-calc/static/js/488.6088e990.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ad3be852.css",
-    "static/js/main.ae0ef600.js"
+    "static/css/main.28f03a2e.css",
+    "static/js/main.fc21194b.js"
   ]
 }
