@@ -1,0 +1,149 @@
+pokemon-team-calc/
+├── .gitattributes
+├── all_project_code_files.xml
+├── directory_tree.txt
+├── .git/
+│   ├── COMMIT_EDITMSG
+│   ├── config
+│   ├── description
+│   ├── FETCH_HEAD
+│   ├── HEAD
+│   ├── index
+│   ├── hooks/
+│   │   ├── applypatch-msg.sample
+│   │   ├── commit-msg.sample
+│   │   ├── fsmonitor-watchman.sample
+│   │   ├── post-update.sample
+│   │   ├── pre-applypatch.sample
+│   │   ├── pre-commit.sample
+│   │   ├── pre-merge-commit.sample
+│   │   ├── pre-push.sample
+│   │   ├── pre-rebase.sample
+│   │   ├── pre-receive.sample
+│   │   ├── prepare-commit-msg.sample
+│   │   ├── push-to-checkout.sample
+│   │   ├── sendemail-validate.sample
+│   │   ├── update.sample
+│   ├── info/
+│   │   ├── exclude
+│   ├── logs/
+│   │   ├── HEAD
+│   │   ├── refs/
+│   │   │   ├── heads/
+│   │   │   │   ├── main
+│   │   │   ├── remotes/
+│   │   │   │   ├── origin/
+│   │   │   │   │   ├── main
+│   ├── objects/
+│   │   ├── 08/
+│   │   │   ├── 0d6c77ac21bb2ef88a6992b2b73ad93daaca92
+│   │   │   ├── 1d0522fdb97b27b6c2bcb7444709c585d3ee12
+│   │   ├── 1f/
+│   │   │   ├── 03afeece5ac28064fa3c73a29215037465f789
+│   │   ├── 2d/
+│   │   │   ├── fa728a97c42b68c2e4658ab2ab7dfc1eb5914c
+│   │   ├── 34/
+│   │   │   ├── 68f63b2593ff96644da6ea3cb17056689a63e7
+│   │   ├── 4d/
+│   │   │   ├── 29575de80483b005c29bfcac5061cd2f45313e
+│   │   ├── 52/
+│   │   │   ├── 53d3ad9e6be6690549cb255f5952337b02401d
+│   │   ├── 58/
+│   │   │   ├── beeaccd87e230076cab531b8f418f40b6d1aeb
+│   │   ├── 62/
+│   │   │   ├── 9c9c688ad92005c783014beb7b565f9fd23e18
+│   │   ├── 6f/
+│   │   │   ├── 9509c88bed7080d496fc5e1d87a9315e30549d
+│   │   ├── 75/
+│   │   │   ├── e6fd2e7c5441b09aebe04b7bef2d959ad3f31a
+│   │   ├── 7e/
+│   │   │   ├── cb0da8453126a086330d8a13bfd9945ed8c1fe
+│   │   ├── 82/
+│   │   │   ├── 83785d1ba7a26e5369b2c4cc64bcdcc68fc855
+│   │   ├── 8e/
+│   │   │   ├── 29b36dea7f04ae8729d8b33ecc05c3c9b0fe46
+│   │   ├── 8f/
+│   │   │   ├── 2609b7b3e0e3897ab3bcaad13caf6876e48699
+│   │   ├── 95/
+│   │   │   ├── c035543789924467363d57b9408c72263961c3
+│   │   ├── 9d/
+│   │   │   ├── fc1c058cebbef8b891c5062be6f31033d7d186
+│   │   ├── a1/
+│   │   │   ├── 1777cc471a4344702741ab1c8a588998b1311a
+│   │   ├── a4/
+│   │   │   ├── e47a6545bc15971f8f63fba70e4013df88a664
+│   │   ├── aa/
+│   │   │   ├── 069f27cbd9d53394428171c3989fd03db73c76
+│   │   ├── ae/
+│   │   │   ├── cb83e8c75ce1930d1661a54737a107e9493112
+│   │   ├── be/
+│   │   │   ├── 25b9eb1d28482b65923395d21b9cf5de160f57
+│   │   ├── c6/
+│   │   │   ├── 163ec6c05ae4699ba68351af5000cd3796b042
+│   │   ├── d3/
+│   │   │   ├── 98c9953d7518dc6891a247ad23f82c2dbc8402
+│   │   ├── d5/
+│   │   │   ├── 63c0fb10ba0e42724b21286eb546ee4e5734fc
+│   │   ├── d8/
+│   │   │   ├── ed7d3d52802f013942678cc6546e6b01f19011
+│   │   ├── d9/
+│   │   │   ├── 47ab175d5eaf2c14e470b748f81df4baa2dbd3
+│   │   ├── df/
+│   │   │   ├── e0770424b2a19faf507a501ebfc23be8f54e7b
+│   │   ├── e9/
+│   │   │   ├── e57dc4d41b9b46e05112e9f45b7ea6ac0ba15e
+│   │   ├── ec/
+│   │   │   ├── 2585e8c0bb8188184ed1e0703c4c8f2a8419b0
+│   │   ├── fc/
+│   │   │   ├── 44b0a3796c0e0a64c3d858ca038bd4570465d9
+│   │   ├── info/
+│   │   ├── pack/
+│   ├── refs/
+│   │   ├── heads/
+│   │   │   ├── main
+│   │   ├── remotes/
+│   │   │   ├── origin/
+│   │   │   │   ├── main
+│   │   ├── tags/
+├── pokemon-team-calc/
+│   ├── .gitignore
+│   ├── directory_combiner.py
+│   ├── directory_tree_creator.py
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── README.md
+│   ├── tailwind.config.js
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   ├── robots.txt
+│   ├── src/
+│   │   ├── App.css
+│   │   ├── App.js
+│   │   ├── App.test.js
+│   │   ├── index.css
+│   │   ├── index.js
+│   │   ├── logo.svg
+│   │   ├── reportWebVitals.js
+│   │   ├── setupTests.js
+│   │   ├── components/
+│   │   │   ├── Header.jsx
+│   │   │   ├── PokemonTeamCalculator.jsx
+│   │   │   ├── BattleStrategy/
+│   │   │   │   ├── BattleRecommendation.jsx
+│   │   │   ├── Modals/
+│   │   │   │   ├── PokemonDetailsModal.jsx
+│   │   │   ├── Shared/
+│   │   │   │   ├── SearchInput.jsx
+│   │   │   │   ├── StatsChart.jsx
+│   │   │   │   ├── TypeBadge.jsx
+│   │   │   ├── TeamBuilder/
+│   │   │   │   ├── PokemonCard.jsx
+│   │   │   │   ├── TeamBuilder.jsx
+│   │   │   │   ├── TeamRecommendations.jsx
+│   │   ├── data/
+│   │   │   ├── typeChart.js
+│   │   │   ├── typeColors.js

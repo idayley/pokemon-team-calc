@@ -2,12 +2,14 @@
   "name": "pokemon-team-calc",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ashjcarter.github.io/pokemon-team-calc",
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "fuse.js": "^7.0.0",
     "localforage": "^1.10.0",
+    "lucide-react": "^0.474.0",
     "postcss": "^8.5.1",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -19,7 +21,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -40,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^3.4.17",
     "web-vitals": "^4.2.4"
   }
