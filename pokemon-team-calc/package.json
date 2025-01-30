@@ -2,7 +2,7 @@
   "name": "pokemon-team-calc",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ashjcarter.github.io/pokemon-team-calc",
+  "homepage": "https://idayley.github.io/pokemon-team-calc",
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
