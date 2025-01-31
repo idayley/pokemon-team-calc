@@ -51,7 +51,10 @@ pokemon-team-calc/
 │   │   │   ├── 4ca31a97cee7b724be6d0894a70eaf3fc5804a
 │   │   ├── 11/
 │   │   │   ├── 22ebdf97fb25f64fecebf81a6154fcc43beda8
+│   │   ├── 14/
+│   │   │   ├── c90861246ddc9fc084b9846c08630563bbeced
 │   │   ├── 15/
+│   │   │   ├── 3e01d45cca01f8af69772b26574ab6dde93cee
 │   │   │   ├── 48843f3b8983876f9d0c3510a96ede54dc4c79
 │   │   │   ├── b2636ca65d1a6a6e510f5f15520da3afacfb05
 │   │   ├── 16/
@@ -62,10 +65,13 @@ pokemon-team-calc/
 │   │   │   ├── be2ef8fbb36a752bf83c9bbcc3100182f34664
 │   │   ├── 1c/
 │   │   │   ├── e17cbebdc21db2b10b5bf85af879839d16eade
+│   │   ├── 1e/
+│   │   │   ├── e1daaaadb7bfd10ac77ca826c079c72ef024f9
 │   │   ├── 1f/
 │   │   │   ├── 03afeece5ac28064fa3c73a29215037465f789
 │   │   ├── 29/
 │   │   │   ├── 142944c13692b3fb42fc9543fdb09efc2ba68d
+│   │   │   ├── 52cea223c97150abda406e5e2b166a0a18ce47
 │   │   ├── 2d/
 │   │   │   ├── fa728a97c42b68c2e4658ab2ab7dfc1eb5914c
 │   │   ├── 2e/
@@ -90,6 +96,12 @@ pokemon-team-calc/
 │   │   │   ├── 0669e8daac49bd88f28651d5afc5c1162ed6a3
 │   │   ├── 52/
 │   │   │   ├── 53d3ad9e6be6690549cb255f5952337b02401d
+│   │   ├── 54/
+│   │   │   ├── ffa8944b019f552ad515b2885d4bf85a29d368
+│   │   ├── 55/
+│   │   │   ├── b27a23ced8fc592e388fa1f32a8eccfee0b95e
+│   │   ├── 57/
+│   │   │   ├── 1eca0fdefa8d2fe639ae8927f82c6b9ea804ca
 │   │   ├── 58/
 │   │   │   ├── beeaccd87e230076cab531b8f418f40b6d1aeb
 │   │   │   ├── bfbf83c80ef34f587931373c54b38e862b4f5a
@@ -109,14 +121,22 @@ pokemon-team-calc/
 │   │   │   ├── 9509c88bed7080d496fc5e1d87a9315e30549d
 │   │   ├── 75/
 │   │   │   ├── e6fd2e7c5441b09aebe04b7bef2d959ad3f31a
+│   │   │   ├── e906112acd16f0e18ace276897849da17a5110
 │   │   ├── 7b/
+│   │   │   ├── 00caf05acbe3bf89140de4ec429f4fe820db58
 │   │   │   ├── d3fb663bf5ffd6d8dcb6b87585e719b582a951
 │   │   ├── 7e/
+│   │   │   ├── 99045b902d8f6f6ed7b805e094d42156069e68
 │   │   │   ├── cb0da8453126a086330d8a13bfd9945ed8c1fe
 │   │   ├── 7f/
 │   │   │   ├── 02d86af70a5cbbeb49aed6ce773980875f370f
+│   │   ├── 80/
+│   │   │   ├── 8e7ed810152585193e3c53d9cd84c25fe90737
+│   │   │   ├── be26112f7bf91d29c01c74db3a64aab6edcaa0
 │   │   ├── 82/
 │   │   │   ├── 83785d1ba7a26e5369b2c4cc64bcdcc68fc855
+│   │   ├── 85/
+│   │   │   ├── edd65079e95295c3910a19bc16a36dda55d955
 │   │   ├── 8e/
 │   │   │   ├── 29b36dea7f04ae8729d8b33ecc05c3c9b0fe46
 │   │   ├── 8f/
@@ -140,6 +160,8 @@ pokemon-team-calc/
 │   │   │   ├── cd0880fec6aaf3cddcb5cc306e4b195631e2f9
 │   │   ├── aa/
 │   │   │   ├── 069f27cbd9d53394428171c3989fd03db73c76
+│   │   ├── ac/
+│   │   │   ├── d619d344b8df3e72ab8a2c53364f004c80774f
 │   │   ├── ae/
 │   │   │   ├── 02df558a63bd1ed36fbdfc1313516257ae749d
 │   │   │   ├── 5c85801c9a98a28408e129e6be4bf2cfaf5d10
@@ -152,12 +174,20 @@ pokemon-team-calc/
 │   │   │   ├── 68f6c4672ec635f51d1549d9f90f7a23ea774a
 │   │   ├── b7/
 │   │   │   ├── 3ba1f06653048e5a635dcbe5bd7111f87d985f
+│   │   │   ├── 43829ed3343c8e4bc834bab64aa73c6e72b8c1
 │   │   ├── b8/
 │   │   │   ├── 6f57b661a9cbd05ceb8a15940d231515811a37
+│   │   ├── b9/
+│   │   │   ├── 22e843773117fca8ecfc07f9ddfb9c0324050b
 │   │   ├── ba/
 │   │   │   ├── 1563bf134ee58cf937d5ca684c980a2c1b7123
+│   │   ├── bd/
+│   │   │   ├── 8a885c0d635bc052622cf027e3db84b06d1793
 │   │   ├── be/
 │   │   │   ├── 25b9eb1d28482b65923395d21b9cf5de160f57
+│   │   │   ├── 6b13e88be496c8f862c1c23dbdadbb3f0518a1
+│   │   ├── bf/
+│   │   │   ├── ec0dbf0c1d4b34f84a10eb1a606dc03a90a18e
 │   │   ├── c1/
 │   │   │   ├── 3b676fcaddbd7d6c6178ee727a341356716b9e
 │   │   ├── c4/
@@ -169,6 +199,8 @@ pokemon-team-calc/
 │   │   ├── ca/
 │   │   │   ├── bda0229731d463291e029aef3938c80e66496d
 │   │   │   ├── c213e87977fdf6f1c44be3614140ca250b5e41
+│   │   ├── d2/
+│   │   │   ├── 1c08b56b75057d717f7f2b3d21f73dbda52e39
 │   │   ├── d3/
 │   │   │   ├── 98c9953d7518dc6891a247ad23f82c2dbc8402
 │   │   ├── d5/
@@ -178,8 +210,15 @@ pokemon-team-calc/
 │   │   ├── d9/
 │   │   │   ├── 178bf712ab32ea066fa4529f69a328fd42d539
 │   │   │   ├── 47ab175d5eaf2c14e470b748f81df4baa2dbd3
+│   │   ├── dc/
+│   │   │   ├── 5a2bb7d6e581eca0da31d02cb43815c2a74df0
+│   │   ├── de/
+│   │   │   ├── 17e27f1ed4f968ae71a3ea4bb6560d405db83c
 │   │   ├── df/
+│   │   │   ├── 04029c0e203e13545c0a8500db611b74018021
 │   │   │   ├── e0770424b2a19faf507a501ebfc23be8f54e7b
+│   │   ├── e1/
+│   │   │   ├── e98f3fe0baef7fefe603e41c67e9d2f62aaa53
 │   │   ├── e3/
 │   │   │   ├── 7b46552ba3caafbdd60a26f6a4e599c20d89de
 │   │   ├── e5/
@@ -220,14 +259,14 @@ pokemon-team-calc/
 │   ├── robots.txt
 │   ├── static/
 │   │   ├── css/
-│   │   │   ├── main.ad3be852.css
-│   │   │   ├── main.ad3be852.css.map
+│   │   │   ├── main.28f03a2e.css
+│   │   │   ├── main.28f03a2e.css.map
 │   │   ├── js/
 │   │   │   ├── 488.6088e990.chunk.js
 │   │   │   ├── 488.6088e990.chunk.js.map
-│   │   │   ├── main.ae0ef600.js
-│   │   │   ├── main.ae0ef600.js.LICENSE.txt
-│   │   │   ├── main.ae0ef600.js.map
+│   │   │   ├── main.fc21194b.js
+│   │   │   ├── main.fc21194b.js.LICENSE.txt
+│   │   │   ├── main.fc21194b.js.map
 │   │   ├── media/
 │   │   │   ├── logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg
 ├── public/
@@ -251,6 +290,7 @@ pokemon-team-calc/
 │   │   ├── PokemonTeamCalculator.jsx
 │   │   ├── BattleStrategy/
 │   │   │   ├── BattleRecommendation.jsx
+│   │   │   ├── SpeedComparison.jsx
 │   │   ├── Modals/
 │   │   │   ├── PokemonDetailsModal.jsx
 │   │   ├── Shared/

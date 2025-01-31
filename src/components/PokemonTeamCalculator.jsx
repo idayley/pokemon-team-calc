@@ -11,10 +11,19 @@ import SearchInput from './Shared/SearchInput';
 import PokemonDetailsModal from './Modals/PokemonDetailsModal';
 import Header from './Header';
 
+// Configure localforage
 localforage.config({
   name: 'pokemon-cache',
   storeName: 'pokemon_data'
 });
+
+// Constants for storage keys
+const STORAGE_KEYS = {
+  TEAM: 'pokemon-team',
+  OPPONENT: 'current-opponent',
+  MOVE_DATA: 'pokemon-move-data',
+  LAST_UPDATED: 'last-updated'
+};
 
 const PokemonTeamCalculator = () => {
   const [team, setTeam] = useState([]);
@@ -28,12 +37,67 @@ const PokemonTeamCalculator = () => {
   const [moveData, setMoveData] = useState({});
   const [selectedPokemon, setSelectedPokemon] = useState(null);
 
+  // Load saved data on component mount
+  useEffect(() => {
+    const loadSavedData = async () => {
+      try {
+        const savedTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
+        if (savedTeam) {
+          setTeam(JSON.parse(savedTeam));
+        }
+
+        const savedOpponent = localStorage.getItem(STORAGE_KEYS.OPPONENT);
+        if (savedOpponent) {
+          setOpponent(JSON.parse(savedOpponent));
+        }
+
+        const savedMoveData = localStorage.getItem(STORAGE_KEYS.MOVE_DATA);
+        if (savedMoveData) {
+          setMoveData(JSON.parse(savedMoveData));
+        }
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+        localStorage.clear();
+      }
+    };
+
+    loadSavedData();
+  }, []);
+
+  // Save data whenever it changes
+  useEffect(() => {
+    if (team.length > 0) {
+      localStorage.setItem(STORAGE_KEYS.TEAM, JSON.stringify(team));
+    }
+    if (opponent) {
+      localStorage.setItem(STORAGE_KEYS.OPPONENT, JSON.stringify(opponent));
+    }
+    if (Object.keys(moveData).length > 0) {
+      localStorage.setItem(STORAGE_KEYS.MOVE_DATA, JSON.stringify(moveData));
+    }
+    localStorage.setItem(STORAGE_KEYS.LAST_UPDATED, new Date().toISOString());
+  }, [team, opponent, moveData]);
+
   const fetchWithCache = useCallback(async (url) => {
+    // Try localStorage first
+    const localData = localStorage.getItem(url);
+    if (localData) {
+      return JSON.parse(localData);
+    }
+
+    // Then check localforage
     const cached = await localforage.getItem(url);
     if (cached) return cached;
     
     const response = await axios.get(url);
+    
     await localforage.setItem(url, response.data);
+    try {
+      localStorage.setItem(url, JSON.stringify(response.data));
+    } catch (e) {
+      console.warn('Could not store in localStorage:', e);
+    }
+    
     return response.data;
   }, []);
 
@@ -134,7 +198,6 @@ const PokemonTeamCalculator = () => {
   }, [coverage, weaknesses, team]);
 
   useEffect(() => {
-    // Add dark mode class to html on mount
     document.documentElement.classList.add('dark');
     return () => document.documentElement.classList.remove('dark');
   }, []);
@@ -152,7 +215,6 @@ const PokemonTeamCalculator = () => {
     }, { damage: 0 });
   }, [team, opponent, moveData, calculateDamage]);
 
-  // Ensure handleDragEnd is properly defined
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     
