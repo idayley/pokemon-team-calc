@@ -18,7 +18,7 @@ const Header = () => {
           
           <div className="hidden sm:flex items-center gap-4">
             <a 
-              href="https://www.pokemon.com/us/pokedex/"
+              href="https://pokemondb.net/pokedex/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white transition-colors"

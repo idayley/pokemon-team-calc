@@ -206,6 +206,15 @@ const PokemonTeamAnalyzer = ({
                 <h3 className="text-lg font-semibold capitalize text-white">
                   {candidatePokemon.name}
                 </h3>
+                <a
+                      href={`https://pokemondb.net/pokedex/${candidatePokemon.name.toLowerCase()}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                    >
+                      Pokédex Entry ↗
+                    </a>
+
                 <div className="flex gap-2 mt-1">
                   {candidatePokemon.types.map(type => (
                     <TypeBadge key={type} type={type} small />
