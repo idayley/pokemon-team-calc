@@ -19,13 +19,28 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
     
     Object.keys(TypeChart).forEach(attackType => {
       let multiplier = 1;
+      let isImmune = false;
       
-      // Calculate effectiveness against each of opponent's types
+      // Check immunities first
       opponent.types.forEach(defenseType => {
+        if (TypeChart[defenseType].immunities.includes(attackType)) {
+          isImmune = true;
+        }
+      });
+
+      if (isImmune) {
+        effectiveness[attackType] = 0;
+        return;
+      }
+
+      // Calculate other type interactions
+      opponent.types.forEach(defenseType => {
+        // Super effective (2x)
         if (TypeChart[attackType].strengths.includes(defenseType)) {
           multiplier *= 2;
         }
-        if (TypeChart[attackType].weaknesses.includes(defenseType)) {
+        // Not very effective (0.5x) - if the defending type resists the attacking type
+        if (TypeChart[defenseType].resistances.includes(attackType)) {
           multiplier *= 0.5;
         }
       });

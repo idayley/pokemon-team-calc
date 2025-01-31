@@ -34,10 +34,15 @@ const PokemonTeamAnalyzer = ({
         
         // Add weaknesses and resistances
         Object.entries(TypeChart).forEach(([attackType, info]) => {
-          if (info.strengths.includes(type)) {
+          // Check for weaknesses (if the attacking type is super effective)
+          if (info.strengths.includes(type) && 
+              !TypeChart[type].resistances.includes(attackType) &&
+              !TypeChart[type].immunities.includes(attackType)) {
             teamWeaknesses.add(attackType);
           }
-          if (info.weaknesses.includes(type)) {
+          // Check for resistances and immunities
+          if (TypeChart[type].resistances.includes(attackType) ||
+              TypeChart[type].immunities.includes(attackType)) {
             teamResistances.add(attackType);
           }
         });
@@ -78,7 +83,10 @@ const PokemonTeamAnalyzer = ({
           }
         });
         Object.entries(TypeChart).forEach(([attackType, info]) => {
-          if (info.strengths.includes(type)) {
+          // Add to weaknesses only if the type isn't resistant or immune
+          if (info.strengths.includes(type) && 
+              !TypeChart[type].resistances.includes(attackType) &&
+              !TypeChart[type].immunities.includes(attackType)) {
             candidateWeaknesses.add(attackType);
           }
         });
@@ -140,7 +148,13 @@ const PokemonTeamAnalyzer = ({
       (newStabCoverage.size * 15) + // STAB coverage bonus (higher weight)
       (newPotentialCoverage.size * 5) + // Potential coverage bonus (lower weight)
       (Array.from(candidateWeaknesses).filter(w => !teamWeaknesses.has(w)).length * -15) + // New weakness penalty
-      (Array.from(teamResistances).filter(r => candidatePokemon.types.includes(r)).length * 8) + // Resistance bonus
+      (Array.from(teamResistances).filter(r => 
+        candidatePokemon.types.some(t => 
+          TypeChart[t].resistances.includes(r) || 
+          TypeChart[t].immunities.includes(r)
+        )).length * 8) + // Resistance/immunity bonus
+      (candidatePokemon.types.some(t => 
+        TypeChart[t].immunities.length > 0) ? 15 : 0) + // Immunity bonus
       (candidatePokemon.types.length > 1 ? 10 : 0) + // Dual-type bonus
       (typeRedundancyCount * -20) + // Heavy penalty for duplicate types
       50 // Base score
@@ -207,13 +221,13 @@ const PokemonTeamAnalyzer = ({
                   {candidatePokemon.name}
                 </h3>
                 <a
-                      href={`https://pokemondb.net/pokedex/${candidatePokemon.name.toLowerCase()}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
-                    >
-                      Pokédex Entry ↗
-                    </a>
+                  href={`https://pokemondb.net/pokedex/${candidatePokemon.name.toLowerCase()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                >
+                  Pokédex Entry ↗
+                </a>
 
                 <div className="flex gap-2 mt-1">
                   {candidatePokemon.types.map(type => (

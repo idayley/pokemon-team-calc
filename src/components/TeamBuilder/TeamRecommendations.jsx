@@ -32,11 +32,17 @@ const TeamRecommendations = ({ team, TypeChart }) => {
 
           // Track defensive matchups
           Object.entries(TypeChart).forEach(([type, info]) => {
+            // Check if this type is super effective against our type
             if (info.strengths.includes(attackingType)) {
               weaknesses.add(type);
             }
-            if (info.weaknesses.includes(attackingType)) {
+            // Check if our type resists this type
+            if (TypeChart[attackingType].resistances.includes(type)) {
               resistances.add(type);
+            }
+            // Check if our type is immune to this type
+            if (TypeChart[attackingType].immunities.includes(type)) {
+              resistances.add(type); // Add immunities to resistances for recommendation purposes
             }
           });
         }
@@ -65,38 +71,71 @@ const TeamRecommendations = ({ team, TypeChart }) => {
     );
 
     // Find common weaknesses (types that multiple Pokémon are weak to)
-    const commonWeaknesses = Array.from(weaknesses).filter(type => 
-      team.filter(p => p.types.some(t => 
-        TypeChart[type]?.strengths.includes(t)
-      )).length >= 2
-    );
-
-    // Calculate recommended types to add
-    const recommendedTypes = allTypes.filter(type => {
-      if (team.some(p => p.types.includes(type))) return false; // Skip types we already have
-      
-      let score = 0;
-      
-      // Add points if this type:
-      // 1. Covers our missing coverage
-      if (TypeChart[type]) {
-        TypeChart[type].strengths.forEach(strength => {
-          if (missingCoverage.includes(strength)) score += 2;
-        });
-      }
-      
-      // 2. Resists our common weaknesses
-      commonWeaknesses.forEach(weakness => {
-        if (TypeChart[weakness]?.weaknesses.includes(type)) score += 3;
-      });
-      
-      // 3. Provides resistance to types we're commonly weak against
-      Array.from(weaknesses).forEach(weakness => {
-        if (TypeChart[weakness]?.weaknesses.includes(type)) score += 1;
-      });
-
-      return score >= 3; // Only recommend types that would be significantly helpful
+    const commonWeaknesses = Array.from(weaknesses).filter(type => {
+      const vulnerablePokemon = team.filter(p => 
+        p.types.some(t => {
+          // Pokemon is vulnerable if the attacking type is super effective
+          // AND the Pokemon's type doesn't resist or isn't immune to it
+          return TypeChart[type]?.strengths.includes(t) &&
+                 !TypeChart[t]?.resistances.includes(type) &&
+                 !TypeChart[t]?.immunities.includes(type);
+        })
+      );
+      return vulnerablePokemon.length >= 2;
     });
+
+    // Calculate recommended types with detailed scoring
+    const recommendedTypes = allTypes
+      .map(type => {
+        if (team.some(p => p.types.includes(type))) return null; // Skip types we already have
+        
+        let score = 0;
+        let coverageCount = 0;
+        let resistanceCount = 0;
+        
+        // Score based on how many missing types it covers
+        if (TypeChart[type]) {
+          TypeChart[type].strengths.forEach(strength => {
+            if (missingCoverage.includes(strength)) {
+              score += 3;
+              coverageCount++;
+            }
+          });
+        }
+        
+        // Score based on how many common weaknesses it resists or is immune to
+        commonWeaknesses.forEach(weakness => {
+          if (TypeChart[type]?.resistances.includes(weakness)) {
+            score += 4;  // Higher weight for resisting common weaknesses
+            resistanceCount++;
+          }
+          if (TypeChart[type]?.immunities.includes(weakness)) {
+            score += 6;  // Even higher weight for immunities to common weaknesses
+            resistanceCount++;
+          }
+        });
+        
+        // Additional score for resisting any team weakness
+        Array.from(weaknesses).forEach(weakness => {
+          if (TypeChart[type]?.resistances.includes(weakness)) {
+            score += 2;
+            resistanceCount++;
+          }
+          if (TypeChart[type]?.immunities.includes(weakness)) {
+            score += 3;
+            resistanceCount++;
+          }
+        });
+
+        return score >= 3 ? {
+          type,
+          score,
+          coverageCount,
+          resistanceCount
+        } : null;
+      })
+      .filter(Boolean) // Remove null entries
+      .sort((a, b) => b.score - a.score); // Sort by score descending
 
     // Analyze stat distribution
     const avgStats = Object.entries(statsDistribution).map(([stat, total]) => ({
@@ -152,11 +191,18 @@ const TeamRecommendations = ({ team, TypeChart }) => {
           </h3>
           <div className="bg-gray-700/50 rounded-lg p-3">
             <p className="text-sm text-gray-400 mb-2">
-              Consider adding Pokémon of these types to strengthen your team:
+              Types ranked by coverage (C) and resistances (R):
             </p>
             <div className="flex flex-wrap gap-2">
-              {analysis.recommendedTypes.map(type => (
-                <TypeBadge key={type} type={type} />
+              {analysis.recommendedTypes.map(({ type, coverageCount, resistanceCount }) => (
+                <div key={type} className="flex items-center gap-2 bg-gray-600/50 rounded-lg px-2 py-1">
+                  <TypeBadge type={type} small />
+                  <span className="text-sm text-gray-400">
+                    {coverageCount > 0 && `C:${coverageCount}`}
+                    {coverageCount > 0 && resistanceCount > 0 && ' '}
+                    {resistanceCount > 0 && `R:${resistanceCount}`}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
