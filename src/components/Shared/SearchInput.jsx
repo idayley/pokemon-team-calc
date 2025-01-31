@@ -22,7 +22,7 @@ const SearchInput = ({
       }
 
       try {
-        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=898');
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=2000');
         const data = await response.json();
         
         const filtered = data.results
