@@ -223,6 +223,122 @@ const PokemonDetailsModal = ({ selectedPokemon, setSelectedPokemon, moveData, Ty
                   </div>
                 )}
   
+                {/* Type Effectiveness */}
+                <div className="bg-gray-700/50 rounded-xl p-6 mb-6">
+                  <h3 className="text-xl font-semibold mb-4 text-white">Type Effectiveness (Defensive)</h3>
+                  {(() => {
+                    // Calculate effectiveness multipliers for each type
+                    const effectiveness = {};
+                    
+                    Object.keys(TypeChart).forEach(attackType => {
+                      let multiplier = 1;
+                      let isImmune = false;
+                      
+                      // Check immunities first
+                      selectedPokemon.types.forEach(defenseType => {
+                        if (TypeChart[defenseType].immunities.includes(attackType)) {
+                          isImmune = true;
+                        }
+                      });
+
+                      if (isImmune) {
+                        effectiveness[attackType] = 0;
+                        return;
+                      }
+
+                      // Calculate other type interactions
+                      selectedPokemon.types.forEach(defenseType => {
+                        // Not very effective (0.5x) - if the defending type resists the attacking type
+                        if (TypeChart[defenseType].resistances.includes(attackType)) {
+                          multiplier *= 0.5;
+                        }
+                        // Super effective (2x)
+                        if (TypeChart[attackType].strengths.includes(defenseType)) {
+                          multiplier *= 2;
+                        }
+                      });
+                      
+                      effectiveness[attackType] = multiplier;
+                    });
+
+                    // Group types by effectiveness
+                    const typesByEffectiveness = {
+                      quad: [], // 4x damage
+                      double: [], // 2x damage
+                      half: [], // 0.5x damage
+                      quarter: [], // 0.25x damage
+                      zero: [] // 0x damage (immunities)
+                    };
+
+                    Object.entries(effectiveness).forEach(([type, multiplier]) => {
+                      if (multiplier === 4) typesByEffectiveness.quad.push(type);
+                      else if (multiplier === 2) typesByEffectiveness.double.push(type);
+                      else if (multiplier === 0.5) typesByEffectiveness.half.push(type);
+                      else if (multiplier === 0.25) typesByEffectiveness.quarter.push(type);
+                      else if (multiplier === 0) typesByEffectiveness.zero.push(type);
+                    });
+
+                    return (
+                      <div className="space-y-4">
+                        {typesByEffectiveness.quad.length > 0 && (
+                          <div>
+                            <p className="text-sm text-red-400 mb-2">Super Effective (4x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.quad.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.double.length > 0 && (
+                          <div>
+                            <p className="text-sm text-orange-400 mb-2">Super Effective (2x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.double.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.half.length > 0 && (
+                          <div>
+                            <p className="text-sm text-blue-400 mb-2">Not Very Effective (0.5x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.half.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.quarter.length > 0 && (
+                          <div>
+                            <p className="text-sm text-blue-500 mb-2">Not Very Effective (0.25x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.quarter.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.zero.length > 0 && (
+                          <div>
+                            <p className="text-sm text-purple-400 mb-2">No Effect (0x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.zero.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 {/* Moves */}
                 <div className="bg-gray-700/50 rounded-xl p-6">
                   <h3 className="text-xl font-semibold mb-4 text-white">

@@ -73,15 +73,33 @@ const PokemonTeamAnalyzer = ({
     const newStabCoverage = new Set();
     const newPotentialCoverage = new Set();
     const candidateWeaknesses = new Set();
+    const newResistances = new Set();
+    const newImmunities = new Set();
     
-    // Add STAB coverage first
+    // Add STAB coverage and calculate defensive contributions
     candidatePokemon.types.forEach(type => {
       if (TypeChart[type]) {
+        // Add new STAB coverage
         TypeChart[type].strengths.forEach(t => {
           if (!existingStabCoverage.has(t)) {
             newStabCoverage.add(t);
           }
         });
+
+        // Add new resistances and immunities
+        TypeChart[type].resistances.forEach(resistedType => {
+          if (!teamResistances.has(resistedType)) {
+            newResistances.add(resistedType);
+          }
+        });
+
+        TypeChart[type].immunities.forEach(immuneType => {
+          if (!teamResistances.has(immuneType)) {
+            newImmunities.add(immuneType);
+          }
+        });
+
+        // Calculate weaknesses
         Object.entries(TypeChart).forEach(([attackType, info]) => {
           // Add to weaknesses only if the type isn't resistant or immune
           if (info.strengths.includes(type) && 
@@ -153,8 +171,8 @@ const PokemonTeamAnalyzer = ({
           TypeChart[t].resistances.includes(r) || 
           TypeChart[t].immunities.includes(r)
         )).length * 8) + // Resistance/immunity bonus
-      (candidatePokemon.types.some(t => 
-        TypeChart[t].immunities.length > 0) ? 15 : 0) + // Immunity bonus
+      (newResistances.size * 12) + // Bonus for new resistances
+      (newImmunities.size * 18) + // Higher bonus for new immunities
       (candidatePokemon.types.length > 1 ? 10 : 0) + // Dual-type bonus
       (typeRedundancyCount * -20) + // Heavy penalty for duplicate types
       50 // Base score
@@ -164,6 +182,8 @@ const PokemonTeamAnalyzer = ({
       newTypes,
       newStabCoverage,
       newPotentialCoverage,
+      newResistances,
+      newImmunities,
       sharedWeaknesses: Array.from(candidateWeaknesses).filter(w => teamWeaknesses.has(w)),
       replacementSuggestions,
       synergyScore
@@ -249,16 +269,18 @@ const PokemonTeamAnalyzer = ({
           {analysis && (
             <>
               {/* New Contributions */}
-              {(analysis.newStabCoverage.size > 0 || analysis.newPotentialCoverage.size > 0) && (
+              {(analysis.newStabCoverage.size > 0 || analysis.newPotentialCoverage.size > 0 || 
+                analysis.newResistances.size > 0 || analysis.newImmunities.size > 0) && (
                 <div className="bg-gray-700 rounded-xl p-4">
                   <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2 mb-3">
                     <Plus className="h-5 w-5" />
                     New Contributions
                   </h3>
                   
+                  {/* Offensive Coverage */}
                   {analysis.newStabCoverage.size > 0 && (
                     <div className="mb-3">
-                      <p className="text-sm text-gray-400 mb-2">Guaranteed Coverage (STAB):</p>
+                      <p className="text-sm text-gray-400 mb-2">New Guaranteed Coverage (STAB):</p>
                       <div className="flex flex-wrap gap-2">
                         {Array.from(analysis.newStabCoverage).map(type => (
                           <TypeBadge key={type} type={type} small />
@@ -268,7 +290,7 @@ const PokemonTeamAnalyzer = ({
                   )}
 
                   {analysis.newPotentialCoverage.size > 0 && (
-                    <div>
+                    <div className="mb-3">
                       <p className="text-sm text-gray-400 mb-2">
                         Potential Coverage (via Moves):
                         <span className="text-xs ml-2 text-gray-500">
@@ -278,6 +300,35 @@ const PokemonTeamAnalyzer = ({
                       <div className="flex flex-wrap gap-2 opacity-75">
                         {Array.from(analysis.newPotentialCoverage).map(type => (
                           <TypeBadge key={type} type={type} small />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Defensive Coverage */}
+                  {analysis.newResistances.size > 0 && (
+                    <div className="mb-3">
+                      <p className="text-sm text-gray-400 mb-2">New Resistances:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from(analysis.newResistances).map(type => (
+                          <div key={type} className="flex items-center gap-1 bg-gray-600/50 rounded-lg px-2 py-1">
+                            <TypeBadge type={type} small />
+                            <span className="text-sm text-gray-300">½×</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {analysis.newImmunities.size > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-400 mb-2">New Immunities:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from(analysis.newImmunities).map(type => (
+                          <div key={type} className="flex items-center gap-1 bg-gray-600/50 rounded-lg px-2 py-1">
+                            <TypeBadge type={type} small />
+                            <span className="text-sm text-gray-300">0×</span>
+                          </div>
                         ))}
                       </div>
                     </div>

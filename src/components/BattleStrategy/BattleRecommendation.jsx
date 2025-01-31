@@ -184,7 +184,7 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
 
       {/* Type Effectiveness Breakdown */}
       <div className="bg-gray-700 rounded-xl p-4">
-        <h3 className="text-lg font-semibold mb-4 text-gray-100">Type Effectiveness</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-100">Weak Against</h3>
         
         <TypeSection 
           types={typeEffectiveness.quad}

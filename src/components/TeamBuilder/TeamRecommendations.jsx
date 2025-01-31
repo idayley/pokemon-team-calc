@@ -90,48 +90,46 @@ const TeamRecommendations = ({ team, TypeChart }) => {
         if (team.some(p => p.types.includes(type))) return null; // Skip types we already have
         
         let score = 0;
-        let coverageCount = 0;
-        let resistanceCount = 0;
+        const newCoverage = new Set();
+        const newResistances = new Set();
         
-        // Score based on how many missing types it covers
+        // Check new coverage this type would bring
         if (TypeChart[type]) {
           TypeChart[type].strengths.forEach(strength => {
-            if (missingCoverage.includes(strength)) {
+            if (!stabCoverage.has(strength) && !potentialCoverage.has(strength)) {
               score += 3;
-              coverageCount++;
+              newCoverage.add(strength);
             }
           });
         }
+
+        // Check new resistances and immunities this type would bring
+        const defensiveContributions = new Set([
+          ...TypeChart[type].resistances,
+          ...TypeChart[type].immunities
+        ]);
         
-        // Score based on how many common weaknesses it resists or is immune to
-        commonWeaknesses.forEach(weakness => {
-          if (TypeChart[type]?.resistances.includes(weakness)) {
-            score += 4;  // Higher weight for resisting common weaknesses
-            resistanceCount++;
-          }
-          if (TypeChart[type]?.immunities.includes(weakness)) {
-            score += 6;  // Even higher weight for immunities to common weaknesses
-            resistanceCount++;
+        defensiveContributions.forEach(defType => {
+          if (!resistances.has(defType)) {
+            score += 4;
+            newResistances.add(defType);
           }
         });
         
-        // Additional score for resisting any team weakness
-        Array.from(weaknesses).forEach(weakness => {
-          if (TypeChart[type]?.resistances.includes(weakness)) {
+        // Additional score for covering team weaknesses
+        commonWeaknesses.forEach(weakness => {
+          if ((TypeChart[type].resistances.includes(weakness) || 
+               TypeChart[type].immunities.includes(weakness)) &&
+              !resistances.has(weakness)) {
             score += 2;
-            resistanceCount++;
-          }
-          if (TypeChart[type]?.immunities.includes(weakness)) {
-            score += 3;
-            resistanceCount++;
           }
         });
 
         return score >= 3 ? {
           type,
           score,
-          coverageCount,
-          resistanceCount
+          coverageCount: newCoverage.size,
+          resistanceCount: newResistances.size
         } : null;
       })
       .filter(Boolean) // Remove null entries
@@ -191,7 +189,7 @@ const TeamRecommendations = ({ team, TypeChart }) => {
           </h3>
           <div className="bg-gray-700/50 rounded-lg p-3">
             <p className="text-sm text-gray-400 mb-2">
-              Types ranked by coverage (C) and resistances (R):
+              Types ranked by new coverage (C) and resistances (R):
             </p>
             <div className="flex flex-wrap gap-2">
               {analysis.recommendedTypes.map(({ type, coverageCount, resistanceCount }) => (
