@@ -349,6 +349,7 @@ const PokemonTeamCalculator = () => {
                   setSelectedPokemon={setSelectedPokemon}
                   searchPokemon={searchPokemon}
                   setSearchResults={setSearchResults}
+                  TypeChart={TypeChart}
                 />
               </DragDropContext>
             </div>
@@ -358,7 +359,7 @@ const PokemonTeamCalculator = () => {
                 <div className="mt-6">
                   <TeamRecommendations team={team} TypeChart={TypeChart} />
                 </div>
-                <div className="mt-6">
+                {/* <div className="mt-6">
                   <PokemonTeamAnalyzer 
                     team={team}
                     setTeam={setTeam}
@@ -370,7 +371,7 @@ const PokemonTeamCalculator = () => {
                     loading={loading}
                     searchResults={searchResults}
                   />
-                </div>
+                </div> */}
               </>
             )}
           </div>
