@@ -10,6 +10,12 @@ import PokemonTeamAnalyzer from './TeamBuilder/PokemonTeamAnalyzer';
 import SearchInput from './Shared/SearchInput';
 import PokemonDetailsModal from './Modals/PokemonDetailsModal';
 import Header from './Header';
+import {
+  searchPokemon as searchPokemonCache,
+  getPokemonDetails,
+  getSpeciesDetails,
+  getMoveDetails
+} from '../utils/pokemonCache';
 
 // Configure localforage
 localforage.config({
@@ -78,59 +84,33 @@ const PokemonTeamCalculator = () => {
     localStorage.setItem(STORAGE_KEYS.LAST_UPDATED, new Date().toISOString());
   }, [team, opponent, moveData]);
 
-  const fetchWithCache = useCallback(async (url) => {
-    // Try localStorage first
-    const localData = localStorage.getItem(url);
-    if (localData) {
-      return JSON.parse(localData);
-    }
-
-    // Then check localforage
-    const cached = await localforage.getItem(url);
-    if (cached) return cached;
-    
-    const response = await axios.get(url);
-    
-    await localforage.setItem(url, response.data);
-    try {
-      localStorage.setItem(url, JSON.stringify(response.data));
-    } catch (e) {
-      console.warn('Could not store in localStorage:', e);
-    }
-    
-    return response.data;
-  }, []);
-
   const searchPokemon = useCallback(async (query, isOpponent = false) => {
     if (query.length < 2) return;
     setLoading(true);
     try {
-      const data = await fetchWithCache(
-        `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`
-      );
-      const processedPokemon = {
-        ...data,
-        types: data.types.map(t => t.type.name.toLowerCase())
-      };
-      
-      if (isOpponent) {
-        setOpponent(processedPokemon);
-      } else {
-        setSearchResults([processedPokemon]);
-        loadMoveData(processedPokemon);
+      const searchResults = await searchPokemonCache(query);
+      if (searchResults.length > 0) {
+        const pokemonData = await getPokemonDetails(searchResults[0].name);
+        
+        if (isOpponent) {
+          setOpponent(pokemonData);
+        } else {
+          setSearchResults([pokemonData]);
+          await loadMoveData(pokemonData);
+        }
       }
     } catch (err) {
       setError('Pokémon not found');
     } finally {
       setLoading(false);
     }
-  }, [fetchWithCache]);
+  }, []);
 
   const loadMoveData = useCallback(async (pokemon) => {
     try {
       const moves = await Promise.all(
         pokemon.moves.slice(0, 4).map(async move => {
-          const data = await fetchWithCache(move.move.url);
+          const data = await getMoveDetails(move.move.url);
           return {
             name: data.name,
             type: data.type.name.toLowerCase(),
@@ -148,7 +128,7 @@ const PokemonTeamCalculator = () => {
     } catch (err) {
       setError('Failed to load move data');
     }
-  }, [fetchWithCache]);
+  }, []);
 
   const calculateDamage = useCallback((attacker, move, defender) => {
     if (!defender?.types?.[0]) return 0;
@@ -217,12 +197,20 @@ const PokemonTeamCalculator = () => {
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-    
-    const items = Array.from(team);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    
-    setTeam(items);
+  
+    // Handle dropping into trash
+    if (result.destination.droppableId === 'trash') {
+      setTeam(team.filter((_, index) => index !== result.source.index));
+      return;
+    }
+  
+    // Handle reordering within team
+    if (result.destination.droppableId === 'team') {
+      const items = Array.from(team);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      setTeam(items);
+    }
   };
 
   return (
@@ -275,7 +263,7 @@ const PokemonTeamCalculator = () => {
             <div className="bg-gray-800 rounded-xl shadow-lg">
               <div className="p-6 border-b border-gray-700">
                 <h2 className="text-2xl font-bold text-white">Your Team</h2>
-                <p className="text-gray-400 mt-1">Build your perfect team of 6 Pokémon</p>
+                <p className="text-gray-400 mt-1">Build your perfect team of 6 Pokémon, tap on a pokemon to see its stats</p>
               </div>
               
               <DragDropContext onDragEnd={handleDragEnd}>

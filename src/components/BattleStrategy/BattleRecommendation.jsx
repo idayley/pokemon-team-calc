@@ -4,6 +4,58 @@ import { Shield, Swords, Scale } from 'lucide-react';
 import SpeedComparison from './SpeedComparison'; 
 
 const BattleRecommendation = ({ team, opponent, TypeChart }) => {
+  // Get STAB attackers analysis
+  const stabAnalysis = useMemo(() => {
+    if (!opponent || !team.length) return [];
+    
+    return team.map(pokemon => {
+      let bestStab = 0;
+      let stabTypes = [];
+      
+      pokemon.types.forEach(attackType => {
+        if (!TypeChart[attackType]) return;
+        
+        let multiplier = 1.5; // Base STAB bonus
+        
+        opponent.types.forEach(defenseType => {
+          // Check for super effectiveness
+          if (TypeChart[attackType].strengths.includes(defenseType)) {
+            multiplier *= 2;
+          }
+          // Check for not very effective
+          if (TypeChart[defenseType].resistances.includes(attackType)) {
+            multiplier *= 0.5;
+          }
+          // Check for immunities
+          if (TypeChart[defenseType].immunities.includes(attackType)) {
+            multiplier = 0;
+          }
+        });
+        
+        if (multiplier > bestStab) {
+          bestStab = multiplier;
+          stabTypes = [attackType];
+        } else if (multiplier === bestStab) {
+          stabTypes.push(attackType);
+        }
+      });
+      
+      return {
+        pokemon,
+        stabMultiplier: bestStab,
+        stabTypes,
+        // Add base stats to factor into overall effectiveness
+        attackStat: Math.max(pokemon.stats[1].base_stat, pokemon.stats[3].base_stat),
+        speedStat: pokemon.stats[5].base_stat
+      };
+    }).filter(a => a.stabMultiplier > 0)
+      .sort((a, b) => {
+        const aScore = a.stabMultiplier * a.attackStat;
+        const bScore = b.stabMultiplier * b.attackStat;
+        return bScore - aScore;
+      });
+  }, [opponent, team, TypeChart]);
+
   const typeEffectiveness = useMemo(() => {
     if (!opponent) return {
       quad: [],
@@ -159,28 +211,43 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
   return (
     <div className="space-y-6">
       {/* Opponent Type Display */}
-      <div className="flex items-center justify-between bg-gray-700 rounded-xl p-4">
-        <div className="flex items-center gap-3">
-          <img
-            src={opponent.sprites.front_default}
-            alt={opponent.name}
-            className="w-12 h-12"
-          />
-          <div>
-            <h3 className="text-lg font-semibold capitalize text-gray-100">
-              {opponent.name}
-            </h3>
-            <div className="flex gap-1 mt-1">
-              {opponent.types.map(type => (
-                <TypeBadge key={type} type={type} small />
-              ))}
+      <div className="bg-gray-700 rounded-xl p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src={opponent.sprites.front_default}
+              alt={opponent.name}
+              className="w-12 h-12"
+            />
+            <div>
+              <h3 className="text-lg font-semibold capitalize text-gray-100">
+                {opponent.name}
+              </h3>
+              <div className="flex gap-1 mt-1">
+                {opponent.types.map(type => (
+                  <TypeBadge key={type} type={type} small />
+                ))}
+              </div>
             </div>
+          </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-gray-600">
+          <p className="text-sm text-gray-400 mb-1">EVs when defeated:</p>
+          <div className="flex flex-wrap gap-2">
+            {opponent.stats.map((stat, index) => {
+              if (stat.effort === 0) return null;
+              const statNames = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
+              return (
+                <span key={index} className="text-sm bg-gray-600 text-gray-200 px-2 py-1 rounded-full">
+                  {stat.effort} {statNames[index]}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Add Speed Comparison here */}
-      {/* <SpeedComparison team={team} opponent={opponent} /> */}
+      
 
       {/* Type Effectiveness Breakdown */}
       <div className="bg-gray-700 rounded-xl p-4">
@@ -218,6 +285,46 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
           />
         )}
       </div>
+
+      {/* Best Attackers Section */}
+      {stabAnalysis.length > 0 && (
+        <div className="bg-gray-700 rounded-xl p-4">
+          <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2 mb-3">
+            <Swords className="h-5 w-5" />
+            Best STAB Attackers
+          </h3>
+          <div className="space-y-3">
+            {stabAnalysis.slice(0, 2).map(({ pokemon, stabMultiplier, stabTypes }) => (
+              <div key={pokemon.id} className="flex items-center justify-between bg-gray-800 p-3 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={pokemon.sprites.front_default}
+                    alt={pokemon.name}
+                    className="w-12 h-12"
+                  />
+                  <div>
+                    <p className="font-medium capitalize text-gray-100">
+                      {pokemon.name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-sm text-gray-400">Using</span>
+                      {stabTypes.map(type => (
+                        <TypeBadge key={type} type={type} small />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-green-400">
+                    {(stabMultiplier * 100).toFixed(0)}%
+                  </p>
+                  <p className="text-sm text-gray-400">Damage</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Avoid Using Section */}
       {vulnerablePokemon.length > 0 && (

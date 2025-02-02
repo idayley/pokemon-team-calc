@@ -44,54 +44,103 @@ pokemon-team-calc/
 │   │   │   │   │   ├── gh-pages
 │   │   │   │   │   ├── main
 │   ├── objects/
+│   │   ├── 02/
+│   │   │   ├── db35de5cad2d52c9b376111544d9e22b882fa6
+│   │   ├── 03/
+│   │   │   ├── a0b9d6c91ee235577e15282e9acd514f4804dd
+│   │   ├── 04/
+│   │   │   ├── cfd2fd1457f7ac4eace7e9d53b7a8d2d64cb39
+│   │   ├── 05/
+│   │   │   ├── 99575300f15e81a80bea70ead8f61e684627bc
 │   │   ├── 08/
 │   │   │   ├── 0d6c77ac21bb2ef88a6992b2b73ad93daaca92
 │   │   │   ├── 1d0522fdb97b27b6c2bcb7444709c585d3ee12
+│   │   ├── 0a/
+│   │   │   ├── 2cc12613ed447770821622293e5360e789d686
+│   │   │   ├── 3f020093fad2cb58345697e2012d41ed2ed0c7
+│   │   │   ├── a6f50ffe4d693cdfae79a03d113ff7fdf0d2b3
 │   │   ├── 0b/
 │   │   │   ├── 4ca31a97cee7b724be6d0894a70eaf3fc5804a
 │   │   ├── 11/
 │   │   │   ├── 22ebdf97fb25f64fecebf81a6154fcc43beda8
+│   │   ├── 13/
+│   │   │   ├── c94eed3815fc551c2e3900812236dc3cb92087
 │   │   ├── 14/
 │   │   │   ├── c90861246ddc9fc084b9846c08630563bbeced
 │   │   ├── 15/
 │   │   │   ├── 3e01d45cca01f8af69772b26574ab6dde93cee
 │   │   │   ├── 48843f3b8983876f9d0c3510a96ede54dc4c79
 │   │   │   ├── b2636ca65d1a6a6e510f5f15520da3afacfb05
+│   │   │   ├── fb1660fd9829cbac50c4d25ed6a0b44be22815
 │   │   ├── 16/
 │   │   │   ├── 71e9116c569df8d9864f9aa1e880261936fba6
+│   │   ├── 18/
+│   │   │   ├── 68344bfb2b1a8c7e001532f145c6957f723005
 │   │   ├── 19/
 │   │   │   ├── 7bfd367b36d33ba4a01879b57d06e07540bdf9
 │   │   ├── 1b/
 │   │   │   ├── be2ef8fbb36a752bf83c9bbcc3100182f34664
 │   │   ├── 1c/
 │   │   │   ├── e17cbebdc21db2b10b5bf85af879839d16eade
+│   │   ├── 1d/
+│   │   │   ├── 5167e8e121737daf54d32ee6fa5aa1d61ce607
 │   │   ├── 1e/
 │   │   │   ├── e1daaaadb7bfd10ac77ca826c079c72ef024f9
 │   │   ├── 1f/
 │   │   │   ├── 03afeece5ac28064fa3c73a29215037465f789
+│   │   ├── 21/
+│   │   │   ├── d8479b3f195263de1a8da7a3b26d518e05794c
+│   │   ├── 25/
+│   │   │   ├── b7e92242b064718088c7ad6826487fc88af1a1
+│   │   ├── 26/
+│   │   │   ├── 8139ef7ab4449f947c8086defc6e9f2b071080
+│   │   │   ├── 9d64942c0ac81c238a9f1af3ff0e8d66191cf3
 │   │   ├── 29/
+│   │   │   ├── 0aad3d31b1654539e85f20bbf6feb9deacad82
 │   │   │   ├── 142944c13692b3fb42fc9543fdb09efc2ba68d
 │   │   │   ├── 52cea223c97150abda406e5e2b166a0a18ce47
+│   │   │   ├── f2f55e3fa7606d345300a2b8f2a1e91137b0d3
+│   │   ├── 2c/
+│   │   │   ├── 3612229babaf0433fc04a5f1af5e0b9474d386
 │   │   ├── 2d/
 │   │   │   ├── fa728a97c42b68c2e4658ab2ab7dfc1eb5914c
 │   │   ├── 2e/
+│   │   │   ├── b35321405d45982502c10760df2f5f2b78fa5f
 │   │   │   ├── bd7f53c84b53699df84451ee809a3964faafd8
+│   │   ├── 30/
+│   │   │   ├── 26a7c109c8c0252e2167e206fb039cf8093b02
 │   │   ├── 31/
 │   │   │   ├── 75d314a7528e63755fe2f0e23cc374761b60cb
+│   │   ├── 33/
+│   │   │   ├── 8f26c0e3d7619b611a9f56690d419a1345cf08
 │   │   ├── 34/
 │   │   │   ├── 68f63b2593ff96644da6ea3cb17056689a63e7
+│   │   ├── 36/
+│   │   │   ├── 6579b99b6f7db1d9f674f216f56c3698314cb4
 │   │   ├── 38/
 │   │   │   ├── 39dd1e9fd0670a032b7d60e067ec21e91400ba
+│   │   ├── 3d/
+│   │   │   ├── 545f7d116803250b675864c85c46b4a515c0fa
+│   │   │   ├── d565f1e50ac82acf3b229626766112c0c18ade
+│   │   ├── 3e/
+│   │   │   ├── 9a3922ef8ee851bac732a8596e20a1eed43928
 │   │   ├── 41/
 │   │   │   ├── 7cef1158fa0ec1aa4de3d0663d2ca3460112a5
+│   │   ├── 43/
+│   │   │   ├── f4a4cb8fe965feb96975be49b9b2d233b313ed
 │   │   ├── 44/
 │   │   │   ├── b111d0334b0f6e17eaf2cc6814eda4445f5692
+│   │   │   ├── d23af6cf0d065b4223141e1abbbb792c844ade
 │   │   ├── 49/
+│   │   │   ├── 2365f8aab95e214c9ca6f4c84abbb04b7a48f0
 │   │   │   ├── f7206de6ca1f41ae0307a35cd64f38e16d9b39
 │   │   ├── 4c/
 │   │   │   ├── ca88c3a96020aa8dc895e33459e442dbe00017
 │   │   ├── 4d/
 │   │   │   ├── 29575de80483b005c29bfcac5061cd2f45313e
+│   │   ├── 4e/
+│   │   │   ├── 743f8bca128baba564d697a9be4ff784e60315
+│   │   │   ├── ef4e286af27e180b366fe7b59378397ad3883f
 │   │   ├── 51/
 │   │   │   ├── 0669e8daac49bd88f28651d5afc5c1162ed6a3
 │   │   ├── 52/
@@ -100,8 +149,11 @@ pokemon-team-calc/
 │   │   │   ├── ffa8944b019f552ad515b2885d4bf85a29d368
 │   │   ├── 55/
 │   │   │   ├── b27a23ced8fc592e388fa1f32a8eccfee0b95e
+│   │   ├── 56/
+│   │   │   ├── 891b1a105c5bb8d7f53d3eb2e27b8487f14208
 │   │   ├── 57/
 │   │   │   ├── 1eca0fdefa8d2fe639ae8927f82c6b9ea804ca
+│   │   │   ├── 45ae25dbc490af283554202f7c32c58f42c53e
 │   │   ├── 58/
 │   │   │   ├── beeaccd87e230076cab531b8f418f40b6d1aeb
 │   │   │   ├── bfbf83c80ef34f587931373c54b38e862b4f5a
@@ -111,36 +163,71 @@ pokemon-team-calc/
 │   │   │   ├── b356b4abbdad3fb9e18fd10cf595a92b248a50
 │   │   ├── 5f/
 │   │   │   ├── 71ade671453988a56d50ca46d22fc2a4b34ee8
+│   │   ├── 60/
+│   │   │   ├── b06e9b62c9a028a2b5397adff9620ed50b924d
 │   │   ├── 62/
+│   │   │   ├── 6e9c033483ee206d5d909db9123b5cb22713d8
+│   │   │   ├── 906d30e645a5b5437fea1c0542db3572db1c4a
 │   │   │   ├── 9c9c688ad92005c783014beb7b565f9fd23e18
+│   │   │   ├── e46124a62cebea10e3ac4e34495f8d6c704afc
 │   │   ├── 67/
 │   │   │   ├── 82ddf46c30fc460a143d9f1a9e1ef5d3c26fa8
 │   │   ├── 6a/
 │   │   │   ├── 5033745b72e434d812ec9772143494192b95a5
+│   │   │   ├── ec653e0fcac5ff9d1e5fe9782c0ee2f6709339
+│   │   ├── 6c/
+│   │   │   ├── 68fc2bdcc76e66bd49f591c74d7cabe9cf6772
 │   │   ├── 6f/
+│   │   │   ├── 5241680801335f3c4fb2b1fbd4a96c73dfd76d
 │   │   │   ├── 9509c88bed7080d496fc5e1d87a9315e30549d
+│   │   ├── 72/
+│   │   │   ├── c362cfa606c63d7306772b579b3a0b15acff14
 │   │   ├── 75/
+│   │   │   ├── 891d2057660db1f32d2644354f27e4c57a0e06
+│   │   │   ├── b6783e2562192c95bfce94bd88aa694ca2917f
 │   │   │   ├── e6fd2e7c5441b09aebe04b7bef2d959ad3f31a
 │   │   │   ├── e906112acd16f0e18ace276897849da17a5110
 │   │   ├── 7b/
 │   │   │   ├── 00caf05acbe3bf89140de4ec429f4fe820db58
 │   │   │   ├── d3fb663bf5ffd6d8dcb6b87585e719b582a951
+│   │   ├── 7c/
+│   │   │   ├── 037708dbd1ca94d38eb7c97ce736bfc6ff52c9
+│   │   │   ├── d08db8735406d16765a2603d1ceb4fc5c68609
 │   │   ├── 7e/
 │   │   │   ├── 99045b902d8f6f6ed7b805e094d42156069e68
 │   │   │   ├── cb0da8453126a086330d8a13bfd9945ed8c1fe
 │   │   ├── 7f/
 │   │   │   ├── 02d86af70a5cbbeb49aed6ce773980875f370f
+│   │   │   ├── 1219522f50338c5160afade642cd26cc632f1c
+│   │   │   ├── f18399357526450fe0a830934c712b9ad3fa47
 │   │   ├── 80/
 │   │   │   ├── 8e7ed810152585193e3c53d9cd84c25fe90737
 │   │   │   ├── be26112f7bf91d29c01c74db3a64aab6edcaa0
 │   │   ├── 82/
 │   │   │   ├── 83785d1ba7a26e5369b2c4cc64bcdcc68fc855
+│   │   ├── 84/
+│   │   │   ├── 1b6e9e35ca59b72fa7fbd53f1e640d19a78221
 │   │   ├── 85/
+│   │   │   ├── 48cae2c01319f279a1f1e19a75cfc6cbeb654e
 │   │   │   ├── edd65079e95295c3910a19bc16a36dda55d955
+│   │   ├── 8a/
+│   │   │   ├── 24f30910067cdf14ad85150518f67899577c01
+│   │   │   ├── 25f184684d6f5b83f82507ed711d141e32b0b1
+│   │   │   ├── 8a9d5f0c78817ee322f458cf37db8d4430b87e
+│   │   ├── 8c/
+│   │   │   ├── 0667274c4000b155c9de5ff07c7c138b32fa3f
+│   │   │   ├── 3c79c4d69a839088b8929ed7257069da221f45
+│   │   ├── 8d/
+│   │   │   ├── 932431980c60c1a18e174f32d06908b17af2ef
 │   │   ├── 8e/
 │   │   │   ├── 29b36dea7f04ae8729d8b33ecc05c3c9b0fe46
+│   │   │   ├── e5bba12431788e62fcac3777dcca79199c7175
 │   │   ├── 8f/
 │   │   │   ├── 2609b7b3e0e3897ab3bcaad13caf6876e48699
+│   │   ├── 90/
+│   │   │   ├── 37231af072b4db3566c581ef85e823109c3c0d
+│   │   ├── 91/
+│   │   │   ├── 520f6e50be3c1f42ebd632f4443b2052061ee1
 │   │   ├── 92/
 │   │   │   ├── 62eaa16dbfc537b4a6992552fba15daba78ad9
 │   │   ├── 95/
@@ -149,25 +236,42 @@ pokemon-team-calc/
 │   │   ├── 96/
 │   │   │   ├── cd62c2c2c10e8d8dbe7a71710a60ff4b7841aa
 │   │   ├── 98/
+│   │   │   ├── 2ad0205959ee996ea0705a61e3ab69205e5985
 │   │   │   ├── 3976a99e17ad303d4d4044528d113ac1c3f41e
+│   │   │   ├── a25612afccd37b83098f816a2a66827837fa23
 │   │   ├── 9d/
+│   │   │   ├── ea48bdd07223118794838d009168cb9244a8f0
+│   │   │   ├── f36daeb1f6f9f502cd6b63feeda3ab40ace88c
 │   │   │   ├── fc1c058cebbef8b891c5062be6f31033d7d186
+│   │   ├── 9f/
+│   │   │   ├── cafa37848438926a1298761cc92fd7f230a076
 │   │   ├── a1/
 │   │   │   ├── 1777cc471a4344702741ab1c8a588998b1311a
 │   │   ├── a4/
 │   │   │   ├── e47a6545bc15971f8f63fba70e4013df88a664
+│   │   ├── a6/
+│   │   │   ├── 8da3710a47f8b0fed68623641d1d305ab800fb
 │   │   ├── a8/
+│   │   │   ├── 1b70c5d26036631b1277134da19267aaf93352
 │   │   │   ├── cd0880fec6aaf3cddcb5cc306e4b195631e2f9
 │   │   ├── aa/
 │   │   │   ├── 069f27cbd9d53394428171c3989fd03db73c76
+│   │   ├── ab/
+│   │   │   ├── 79604fe9c5befaebab1c3cdd2abb978489ca71
 │   │   ├── ac/
 │   │   │   ├── d619d344b8df3e72ab8a2c53364f004c80774f
+│   │   ├── ad/
+│   │   │   ├── 9e2d639ff19b6c0a70e7b1d1a74f21d30f5b5c
 │   │   ├── ae/
 │   │   │   ├── 02df558a63bd1ed36fbdfc1313516257ae749d
 │   │   │   ├── 5c85801c9a98a28408e129e6be4bf2cfaf5d10
 │   │   │   ├── cb83e8c75ce1930d1661a54737a107e9493112
 │   │   ├── af/
 │   │   │   ├── 95a71f2d32f862a64395479eeb9bf3cb943c26
+│   │   ├── b2/
+│   │   │   ├── 5b26a8363144569fc5d05f2fed23216df032bf
+│   │   ├── b4/
+│   │   │   ├── 0b20cb7a5e1068ae02a9e602ac2c37b0486bb8
 │   │   ├── b5/
 │   │   │   ├── 73f0c23290a904abec15d0780d5a511ee9a6f9
 │   │   ├── b6/
@@ -181,6 +285,10 @@ pokemon-team-calc/
 │   │   │   ├── 22e843773117fca8ecfc07f9ddfb9c0324050b
 │   │   ├── ba/
 │   │   │   ├── 1563bf134ee58cf937d5ca684c980a2c1b7123
+│   │   ├── bc/
+│   │   │   ├── 6361dfd6fe719b12b78bc280fe539bd59f0f6e
+│   │   │   ├── 80c4348616b2386b8b20d345cf33024c7f70a1
+│   │   │   ├── 8b0f08d2604a2ea2d1246de25d9fa83ea434fd
 │   │   ├── bd/
 │   │   │   ├── 8a885c0d635bc052622cf027e3db84b06d1793
 │   │   ├── be/
@@ -199,44 +307,78 @@ pokemon-team-calc/
 │   │   ├── ca/
 │   │   │   ├── bda0229731d463291e029aef3938c80e66496d
 │   │   │   ├── c213e87977fdf6f1c44be3614140ca250b5e41
+│   │   ├── cc/
+│   │   │   ├── ce9afcc6b6bdca69158e493f82a2ad3e834ce6
+│   │   ├── cf/
+│   │   │   ├── 0d21b10b18aca6552cd5e5e14ad2a372e3d5d3
+│   │   ├── d1/
+│   │   │   ├── 190ed2be043f151ccae3e5deec0731e0fc0c25
 │   │   ├── d2/
 │   │   │   ├── 1c08b56b75057d717f7f2b3d21f73dbda52e39
 │   │   ├── d3/
 │   │   │   ├── 98c9953d7518dc6891a247ad23f82c2dbc8402
 │   │   ├── d5/
 │   │   │   ├── 63c0fb10ba0e42724b21286eb546ee4e5734fc
+│   │   │   ├── bd8a6a6ea76aa3e6abf79e1c861a2b361d709d
+│   │   │   ├── eb52a8185b67afaab3fa86f7e91e30ff8600e7
 │   │   ├── d8/
+│   │   │   ├── dce2ff3864cd91aa7d0d4e84928176a71e81c0
 │   │   │   ├── ed7d3d52802f013942678cc6546e6b01f19011
 │   │   ├── d9/
 │   │   │   ├── 178bf712ab32ea066fa4529f69a328fd42d539
 │   │   │   ├── 47ab175d5eaf2c14e470b748f81df4baa2dbd3
+│   │   ├── db/
+│   │   │   ├── c3caa62e5a6d398168d6c96e8be07b5154766e
+│   │   │   ├── e0a0d1198cd3cc38dca1260d969b0ce3ce1ec5
 │   │   ├── dc/
 │   │   │   ├── 5a2bb7d6e581eca0da31d02cb43815c2a74df0
+│   │   │   ├── d7c335e48bb5ce84d269def4ba87601d2288ed
 │   │   ├── de/
 │   │   │   ├── 17e27f1ed4f968ae71a3ea4bb6560d405db83c
 │   │   ├── df/
 │   │   │   ├── 04029c0e203e13545c0a8500db611b74018021
+│   │   │   ├── ad67b45c8784238e9dc232b3ad427f9b8322a1
 │   │   │   ├── e0770424b2a19faf507a501ebfc23be8f54e7b
 │   │   ├── e1/
+│   │   │   ├── 400d76051d1df53b2a2cae271106874a878f4d
 │   │   │   ├── e98f3fe0baef7fefe603e41c67e9d2f62aaa53
 │   │   ├── e3/
 │   │   │   ├── 7b46552ba3caafbdd60a26f6a4e599c20d89de
 │   │   ├── e5/
 │   │   │   ├── 17ac3d38adf376540bc6a6eaed3c98328fc39b
 │   │   ├── e6/
+│   │   │   ├── 003bb7071974a09acb5f58271335b3f92428ab
 │   │   │   ├── a4eaca38c233754a0a17ef4279f6bdd738d1ec
 │   │   ├── e9/
 │   │   │   ├── e57dc4d41b9b46e05112e9f45b7ea6ac0ba15e
+│   │   ├── ea/
+│   │   │   ├── c8221fc1816a77ab721f1f95351a1dbfb3fcf0
 │   │   ├── ec/
 │   │   │   ├── 2585e8c0bb8188184ed1e0703c4c8f2a8419b0
 │   │   ├── ee/
 │   │   │   ├── 9212af2b0255f2c9d141a009c24bd3ef1494eb
 │   │   ├── ef/
 │   │   │   ├── bc77a7bcb69aceee5db85e3a5b0857d441aec4
+│   │   ├── f0/
+│   │   │   ├── 0e17a3904ffdb77fa719ebdff700a8ed3170b1
+│   │   ├── f3/
+│   │   │   ├── 71aefcab51404a47c3880efd335e1b2e9b1bc6
 │   │   ├── f4/
 │   │   │   ├── 3431deade95b51dad12225f0280ff4d4a8c4d1
+│   │   ├── f5/
+│   │   │   ├── 935254f955cfa7248cb85617f02fca93258072
 │   │   ├── f7/
 │   │   │   ├── 34e18f451c1d957d34357965c7c1821bdf3969
+│   │   ├── f8/
+│   │   │   ├── 000a24d7925678da98031b69020f9a434d714d
+│   │   │   ├── 5a4427f514c8b7c7d42f7389d1d640f00fc69a
+│   │   │   ├── cf6a02e87dda7ecb18cd422aa62620e978cd43
+│   │   ├── f9/
+│   │   │   ├── c48989e57043090749f67fef108a73cb7d8577
+│   │   ├── fa/
+│   │   │   ├── b6cd6b88f7feb3ac6cbb92d16b9a1062ec4408
+│   │   ├── fb/
+│   │   │   ├── d5e1f201520efec0869bf3cf505b578b35efc9
 │   │   ├── fc/
 │   │   │   ├── 44b0a3796c0e0a64c3d858ca038bd4570465d9
 │   │   ├── info/
@@ -259,14 +401,14 @@ pokemon-team-calc/
 │   ├── robots.txt
 │   ├── static/
 │   │   ├── css/
-│   │   │   ├── main.28f03a2e.css
-│   │   │   ├── main.28f03a2e.css.map
+│   │   │   ├── main.347b452f.css
+│   │   │   ├── main.347b452f.css.map
 │   │   ├── js/
 │   │   │   ├── 488.6088e990.chunk.js
 │   │   │   ├── 488.6088e990.chunk.js.map
-│   │   │   ├── main.fc21194b.js
-│   │   │   ├── main.fc21194b.js.LICENSE.txt
-│   │   │   ├── main.fc21194b.js.map
+│   │   │   ├── main.3a6fdc34.js
+│   │   │   ├── main.3a6fdc34.js.LICENSE.txt
+│   │   │   ├── main.3a6fdc34.js.map
 │   │   ├── media/
 │   │   │   ├── logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg
 ├── public/

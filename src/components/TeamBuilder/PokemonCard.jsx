@@ -61,8 +61,7 @@ const getTopStats = (stats) => {
     .slice(0, 2);
 };
 
-// Updated PokemonCard component
-const PokemonCard = ({ pokemon, index, onClick, onRemove }) => {
+const PokemonCard = ({ pokemon, index, onClick }) => {
   const topStats = getTopStats(pokemon.stats);
 
   return (
@@ -78,18 +77,6 @@ const PokemonCard = ({ pokemon, index, onClick, onRemove }) => {
             ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-400' : ''}
           `}
         >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove(pokemon.id);
-            }}
-            className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 
-                     text-white rounded-full p-1 z-10 opacity-0 group-hover:opacity-100 
-                     transition-opacity shadow-lg"
-          >
-            <X size={16} />
-          </button>
-
           <div 
             className="p-3"
             onClick={() => onClick(pokemon)}

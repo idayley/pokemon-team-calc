@@ -1196,7 +1196,7 @@ const Header = () => {
           
           <div className="hidden sm:flex items-center gap-4">
             <a 
-              href="https://www.pokemon.com/us/pokedex/"
+              href="https://pokemondb.net/pokedex/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white transition-colors"
@@ -1240,11 +1240,26 @@ import PokemonTeamAnalyzer from './TeamBuilder/PokemonTeamAnalyzer';
 import SearchInput from './Shared/SearchInput';
 import PokemonDetailsModal from './Modals/PokemonDetailsModal';
 import Header from './Header';
+import {
+  searchPokemon as searchPokemonCache,
+  getPokemonDetails,
+  getSpeciesDetails,
+  getMoveDetails
+} from '../utils/pokemonCache';
 
+// Configure localforage
 localforage.config({
   name: 'pokemon-cache',
   storeName: 'pokemon_data'
 });
+
+// Constants for storage keys
+const STORAGE_KEYS = {
+  TEAM: 'pokemon-team',
+  OPPONENT: 'current-opponent',
+  MOVE_DATA: 'pokemon-move-data',
+  LAST_UPDATED: 'last-updated'
+};
 
 const PokemonTeamCalculator = () => {
   const [team, setTeam] = useState([]);
@@ -1258,45 +1273,74 @@ const PokemonTeamCalculator = () => {
   const [moveData, setMoveData] = useState({});
   const [selectedPokemon, setSelectedPokemon] = useState(null);
 
-  const fetchWithCache = useCallback(async (url) => {
-    const cached = await localforage.getItem(url);
-    if (cached) return cached;
-    
-    const response = await axios.get(url);
-    await localforage.setItem(url, response.data);
-    return response.data;
+  // Load saved data on component mount
+  useEffect(() => {
+    const loadSavedData = async () => {
+      try {
+        const savedTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
+        if (savedTeam) {
+          setTeam(JSON.parse(savedTeam));
+        }
+
+        const savedOpponent = localStorage.getItem(STORAGE_KEYS.OPPONENT);
+        if (savedOpponent) {
+          setOpponent(JSON.parse(savedOpponent));
+        }
+
+        const savedMoveData = localStorage.getItem(STORAGE_KEYS.MOVE_DATA);
+        if (savedMoveData) {
+          setMoveData(JSON.parse(savedMoveData));
+        }
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+        localStorage.clear();
+      }
+    };
+
+    loadSavedData();
   }, []);
+
+  // Save data whenever it changes
+  useEffect(() => {
+    if (team.length > 0) {
+      localStorage.setItem(STORAGE_KEYS.TEAM, JSON.stringify(team));
+    }
+    if (opponent) {
+      localStorage.setItem(STORAGE_KEYS.OPPONENT, JSON.stringify(opponent));
+    }
+    if (Object.keys(moveData).length > 0) {
+      localStorage.setItem(STORAGE_KEYS.MOVE_DATA, JSON.stringify(moveData));
+    }
+    localStorage.setItem(STORAGE_KEYS.LAST_UPDATED, new Date().toISOString());
+  }, [team, opponent, moveData]);
 
   const searchPokemon = useCallback(async (query, isOpponent = false) => {
     if (query.length < 2) return;
     setLoading(true);
     try {
-      const data = await fetchWithCache(
-        `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`
-      );
-      const processedPokemon = {
-        ...data,
-        types: data.types.map(t => t.type.name.toLowerCase())
-      };
-      
-      if (isOpponent) {
-        setOpponent(processedPokemon);
-      } else {
-        setSearchResults([processedPokemon]);
-        loadMoveData(processedPokemon);
+      const searchResults = await searchPokemonCache(query);
+      if (searchResults.length > 0) {
+        const pokemonData = await getPokemonDetails(searchResults[0].name);
+        
+        if (isOpponent) {
+          setOpponent(pokemonData);
+        } else {
+          setSearchResults([pokemonData]);
+          await loadMoveData(pokemonData);
+        }
       }
     } catch (err) {
       setError('Pokémon not found');
     } finally {
       setLoading(false);
     }
-  }, [fetchWithCache]);
+  }, []);
 
   const loadMoveData = useCallback(async (pokemon) => {
     try {
       const moves = await Promise.all(
         pokemon.moves.slice(0, 4).map(async move => {
-          const data = await fetchWithCache(move.move.url);
+          const data = await getMoveDetails(move.move.url);
           return {
             name: data.name,
             type: data.type.name.toLowerCase(),
@@ -1314,7 +1358,7 @@ const PokemonTeamCalculator = () => {
     } catch (err) {
       setError('Failed to load move data');
     }
-  }, [fetchWithCache]);
+  }, []);
 
   const calculateDamage = useCallback((attacker, move, defender) => {
     if (!defender?.types?.[0]) return 0;
@@ -1364,7 +1408,6 @@ const PokemonTeamCalculator = () => {
   }, [coverage, weaknesses, team]);
 
   useEffect(() => {
-    // Add dark mode class to html on mount
     document.documentElement.classList.add('dark');
     return () => document.documentElement.classList.remove('dark');
   }, []);
@@ -1382,7 +1425,6 @@ const PokemonTeamCalculator = () => {
     }, { damage: 0 });
   }, [team, opponent, moveData, calculateDamage]);
 
-  // Ensure handleDragEnd is properly defined
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     
@@ -1443,7 +1485,7 @@ const PokemonTeamCalculator = () => {
             <div className="bg-gray-800 rounded-xl shadow-lg">
               <div className="p-6 border-b border-gray-700">
                 <h2 className="text-2xl font-bold text-white">Your Team</h2>
-                <p className="text-gray-400 mt-1">Build your perfect team of 6 Pokémon</p>
+                <p className="text-gray-400 mt-1">Build your perfect team of 6 Pokémon, tap on a pokemon to see its stats</p>
               </div>
               
               <DragDropContext onDragEnd={handleDragEnd}>
@@ -1551,6 +1593,58 @@ import { Shield, Swords, Scale } from 'lucide-react';
 import SpeedComparison from './SpeedComparison'; 
 
 const BattleRecommendation = ({ team, opponent, TypeChart }) => {
+  // Get STAB attackers analysis
+  const stabAnalysis = useMemo(() => {
+    if (!opponent || !team.length) return [];
+    
+    return team.map(pokemon => {
+      let bestStab = 0;
+      let stabTypes = [];
+      
+      pokemon.types.forEach(attackType => {
+        if (!TypeChart[attackType]) return;
+        
+        let multiplier = 1.5; // Base STAB bonus
+        
+        opponent.types.forEach(defenseType => {
+          // Check for super effectiveness
+          if (TypeChart[attackType].strengths.includes(defenseType)) {
+            multiplier *= 2;
+          }
+          // Check for not very effective
+          if (TypeChart[defenseType].resistances.includes(attackType)) {
+            multiplier *= 0.5;
+          }
+          // Check for immunities
+          if (TypeChart[defenseType].immunities.includes(attackType)) {
+            multiplier = 0;
+          }
+        });
+        
+        if (multiplier > bestStab) {
+          bestStab = multiplier;
+          stabTypes = [attackType];
+        } else if (multiplier === bestStab) {
+          stabTypes.push(attackType);
+        }
+      });
+      
+      return {
+        pokemon,
+        stabMultiplier: bestStab,
+        stabTypes,
+        // Add base stats to factor into overall effectiveness
+        attackStat: Math.max(pokemon.stats[1].base_stat, pokemon.stats[3].base_stat),
+        speedStat: pokemon.stats[5].base_stat
+      };
+    }).filter(a => a.stabMultiplier > 0)
+      .sort((a, b) => {
+        const aScore = a.stabMultiplier * a.attackStat;
+        const bScore = b.stabMultiplier * b.attackStat;
+        return bScore - aScore;
+      });
+  }, [opponent, team, TypeChart]);
+
   const typeEffectiveness = useMemo(() => {
     if (!opponent) return {
       quad: [],
@@ -1566,13 +1660,28 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
     
     Object.keys(TypeChart).forEach(attackType => {
       let multiplier = 1;
+      let isImmune = false;
       
-      // Calculate effectiveness against each of opponent's types
+      // Check immunities first
       opponent.types.forEach(defenseType => {
+        if (TypeChart[defenseType].immunities.includes(attackType)) {
+          isImmune = true;
+        }
+      });
+
+      if (isImmune) {
+        effectiveness[attackType] = 0;
+        return;
+      }
+
+      // Calculate other type interactions
+      opponent.types.forEach(defenseType => {
+        // Super effective (2x)
         if (TypeChart[attackType].strengths.includes(defenseType)) {
           multiplier *= 2;
         }
-        if (TypeChart[attackType].weaknesses.includes(defenseType)) {
+        // Not very effective (0.5x) - if the defending type resists the attacking type
+        if (TypeChart[defenseType].resistances.includes(attackType)) {
           multiplier *= 0.5;
         }
       });
@@ -1691,32 +1800,47 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
   return (
     <div className="space-y-6">
       {/* Opponent Type Display */}
-      <div className="flex items-center justify-between bg-gray-700 rounded-xl p-4">
-        <div className="flex items-center gap-3">
-          <img
-            src={opponent.sprites.front_default}
-            alt={opponent.name}
-            className="w-12 h-12"
-          />
-          <div>
-            <h3 className="text-lg font-semibold capitalize text-gray-100">
-              {opponent.name}
-            </h3>
-            <div className="flex gap-1 mt-1">
-              {opponent.types.map(type => (
-                <TypeBadge key={type} type={type} small />
-              ))}
+      <div className="bg-gray-700 rounded-xl p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src={opponent.sprites.front_default}
+              alt={opponent.name}
+              className="w-12 h-12"
+            />
+            <div>
+              <h3 className="text-lg font-semibold capitalize text-gray-100">
+                {opponent.name}
+              </h3>
+              <div className="flex gap-1 mt-1">
+                {opponent.types.map(type => (
+                  <TypeBadge key={type} type={type} small />
+                ))}
+              </div>
             </div>
+          </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-gray-600">
+          <p className="text-sm text-gray-400 mb-1">EVs when defeated:</p>
+          <div className="flex flex-wrap gap-2">
+            {opponent.stats.map((stat, index) => {
+              if (stat.effort === 0) return null;
+              const statNames = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
+              return (
+                <span key={index} className="text-sm bg-gray-600 text-gray-200 px-2 py-1 rounded-full">
+                  {stat.effort} {statNames[index]}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Add Speed Comparison here */}
-      {/* <SpeedComparison team={team} opponent={opponent} /> */}
+      
 
       {/* Type Effectiveness Breakdown */}
       <div className="bg-gray-700 rounded-xl p-4">
-        <h3 className="text-lg font-semibold mb-4 text-gray-100">Type Effectiveness</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-100">Weak Against</h3>
         
         <TypeSection 
           types={typeEffectiveness.quad}
@@ -1750,6 +1874,46 @@ const BattleRecommendation = ({ team, opponent, TypeChart }) => {
           />
         )}
       </div>
+
+      {/* Best Attackers Section */}
+      {stabAnalysis.length > 0 && (
+        <div className="bg-gray-700 rounded-xl p-4">
+          <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2 mb-3">
+            <Swords className="h-5 w-5" />
+            Best STAB Attackers
+          </h3>
+          <div className="space-y-3">
+            {stabAnalysis.slice(0, 2).map(({ pokemon, stabMultiplier, stabTypes }) => (
+              <div key={pokemon.id} className="flex items-center justify-between bg-gray-800 p-3 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={pokemon.sprites.front_default}
+                    alt={pokemon.name}
+                    className="w-12 h-12"
+                  />
+                  <div>
+                    <p className="font-medium capitalize text-gray-100">
+                      {pokemon.name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-sm text-gray-400">Using</span>
+                      {stabTypes.map(type => (
+                        <TypeBadge key={type} type={type} small />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-green-400">
+                    {(stabMultiplier * 100).toFixed(0)}%
+                  </p>
+                  <p className="text-sm text-gray-400">Damage</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Avoid Using Section */}
       {vulnerablePokemon.length > 0 && (
@@ -2176,6 +2340,122 @@ const PokemonDetailsModal = ({ selectedPokemon, setSelectedPokemon, moveData, Ty
                   </div>
                 )}
   
+                {/* Type Effectiveness */}
+                <div className="bg-gray-700/50 rounded-xl p-6 mb-6">
+                  <h3 className="text-xl font-semibold mb-4 text-white">Type Effectiveness (Defensive)</h3>
+                  {(() => {
+                    // Calculate effectiveness multipliers for each type
+                    const effectiveness = {};
+                    
+                    Object.keys(TypeChart).forEach(attackType => {
+                      let multiplier = 1;
+                      let isImmune = false;
+                      
+                      // Check immunities first
+                      selectedPokemon.types.forEach(defenseType => {
+                        if (TypeChart[defenseType].immunities.includes(attackType)) {
+                          isImmune = true;
+                        }
+                      });
+
+                      if (isImmune) {
+                        effectiveness[attackType] = 0;
+                        return;
+                      }
+
+                      // Calculate other type interactions
+                      selectedPokemon.types.forEach(defenseType => {
+                        // Not very effective (0.5x) - if the defending type resists the attacking type
+                        if (TypeChart[defenseType].resistances.includes(attackType)) {
+                          multiplier *= 0.5;
+                        }
+                        // Super effective (2x)
+                        if (TypeChart[attackType].strengths.includes(defenseType)) {
+                          multiplier *= 2;
+                        }
+                      });
+                      
+                      effectiveness[attackType] = multiplier;
+                    });
+
+                    // Group types by effectiveness
+                    const typesByEffectiveness = {
+                      quad: [], // 4x damage
+                      double: [], // 2x damage
+                      half: [], // 0.5x damage
+                      quarter: [], // 0.25x damage
+                      zero: [] // 0x damage (immunities)
+                    };
+
+                    Object.entries(effectiveness).forEach(([type, multiplier]) => {
+                      if (multiplier === 4) typesByEffectiveness.quad.push(type);
+                      else if (multiplier === 2) typesByEffectiveness.double.push(type);
+                      else if (multiplier === 0.5) typesByEffectiveness.half.push(type);
+                      else if (multiplier === 0.25) typesByEffectiveness.quarter.push(type);
+                      else if (multiplier === 0) typesByEffectiveness.zero.push(type);
+                    });
+
+                    return (
+                      <div className="space-y-4">
+                        {typesByEffectiveness.quad.length > 0 && (
+                          <div>
+                            <p className="text-sm text-red-400 mb-2">Super Effective (4x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.quad.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.double.length > 0 && (
+                          <div>
+                            <p className="text-sm text-orange-400 mb-2">Super Effective (2x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.double.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.half.length > 0 && (
+                          <div>
+                            <p className="text-sm text-blue-400 mb-2">Not Very Effective (0.5x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.half.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.quarter.length > 0 && (
+                          <div>
+                            <p className="text-sm text-blue-500 mb-2">Not Very Effective (0.25x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.quarter.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {typesByEffectiveness.zero.length > 0 && (
+                          <div>
+                            <p className="text-sm text-purple-400 mb-2">No Effect (0x):</p>
+                            <div className="flex flex-wrap gap-2">
+                              {typesByEffectiveness.zero.map(type => (
+                                <TypeBadge key={type} type={type} small />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 {/* Moves */}
                 <div className="bg-gray-700/50 rounded-xl p-6">
                   <h3 className="text-xl font-semibold mb-4 text-white">
@@ -2318,7 +2598,7 @@ const SearchInput = ({
       }
 
       try {
-        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=898');
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=2000');
         const data = await response.json();
         
         const filtered = data.results
@@ -2701,10 +2981,15 @@ const PokemonTeamAnalyzer = ({
         
         // Add weaknesses and resistances
         Object.entries(TypeChart).forEach(([attackType, info]) => {
-          if (info.strengths.includes(type)) {
+          // Check for weaknesses (if the attacking type is super effective)
+          if (info.strengths.includes(type) && 
+              !TypeChart[type].resistances.includes(attackType) &&
+              !TypeChart[type].immunities.includes(attackType)) {
             teamWeaknesses.add(attackType);
           }
-          if (info.weaknesses.includes(type)) {
+          // Check for resistances and immunities
+          if (TypeChart[type].resistances.includes(attackType) ||
+              TypeChart[type].immunities.includes(attackType)) {
             teamResistances.add(attackType);
           }
         });
@@ -2735,17 +3020,38 @@ const PokemonTeamAnalyzer = ({
     const newStabCoverage = new Set();
     const newPotentialCoverage = new Set();
     const candidateWeaknesses = new Set();
+    const newResistances = new Set();
+    const newImmunities = new Set();
     
-    // Add STAB coverage first
+    // Add STAB coverage and calculate defensive contributions
     candidatePokemon.types.forEach(type => {
       if (TypeChart[type]) {
+        // Add new STAB coverage
         TypeChart[type].strengths.forEach(t => {
           if (!existingStabCoverage.has(t)) {
             newStabCoverage.add(t);
           }
         });
+
+        // Add new resistances and immunities
+        TypeChart[type].resistances.forEach(resistedType => {
+          if (!teamResistances.has(resistedType)) {
+            newResistances.add(resistedType);
+          }
+        });
+
+        TypeChart[type].immunities.forEach(immuneType => {
+          if (!teamResistances.has(immuneType)) {
+            newImmunities.add(immuneType);
+          }
+        });
+
+        // Calculate weaknesses
         Object.entries(TypeChart).forEach(([attackType, info]) => {
-          if (info.strengths.includes(type)) {
+          // Add to weaknesses only if the type isn't resistant or immune
+          if (info.strengths.includes(type) && 
+              !TypeChart[type].resistances.includes(attackType) &&
+              !TypeChart[type].immunities.includes(attackType)) {
             candidateWeaknesses.add(attackType);
           }
         });
@@ -2807,7 +3113,13 @@ const PokemonTeamAnalyzer = ({
       (newStabCoverage.size * 15) + // STAB coverage bonus (higher weight)
       (newPotentialCoverage.size * 5) + // Potential coverage bonus (lower weight)
       (Array.from(candidateWeaknesses).filter(w => !teamWeaknesses.has(w)).length * -15) + // New weakness penalty
-      (Array.from(teamResistances).filter(r => candidatePokemon.types.includes(r)).length * 8) + // Resistance bonus
+      (Array.from(teamResistances).filter(r => 
+        candidatePokemon.types.some(t => 
+          TypeChart[t].resistances.includes(r) || 
+          TypeChart[t].immunities.includes(r)
+        )).length * 8) + // Resistance/immunity bonus
+      (newResistances.size * 12) + // Bonus for new resistances
+      (newImmunities.size * 18) + // Higher bonus for new immunities
       (candidatePokemon.types.length > 1 ? 10 : 0) + // Dual-type bonus
       (typeRedundancyCount * -20) + // Heavy penalty for duplicate types
       50 // Base score
@@ -2817,6 +3129,8 @@ const PokemonTeamAnalyzer = ({
       newTypes,
       newStabCoverage,
       newPotentialCoverage,
+      newResistances,
+      newImmunities,
       sharedWeaknesses: Array.from(candidateWeaknesses).filter(w => teamWeaknesses.has(w)),
       replacementSuggestions,
       synergyScore
@@ -2873,6 +3187,15 @@ const PokemonTeamAnalyzer = ({
                 <h3 className="text-lg font-semibold capitalize text-white">
                   {candidatePokemon.name}
                 </h3>
+                <a
+                  href={`https://pokemondb.net/pokedex/${candidatePokemon.name.toLowerCase()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                >
+                  Pokédex Entry ↗
+                </a>
+
                 <div className="flex gap-2 mt-1">
                   {candidatePokemon.types.map(type => (
                     <TypeBadge key={type} type={type} small />
@@ -2893,16 +3216,18 @@ const PokemonTeamAnalyzer = ({
           {analysis && (
             <>
               {/* New Contributions */}
-              {(analysis.newStabCoverage.size > 0 || analysis.newPotentialCoverage.size > 0) && (
+              {(analysis.newStabCoverage.size > 0 || analysis.newPotentialCoverage.size > 0 || 
+                analysis.newResistances.size > 0 || analysis.newImmunities.size > 0) && (
                 <div className="bg-gray-700 rounded-xl p-4">
                   <h3 className="text-lg font-semibold text-green-400 flex items-center gap-2 mb-3">
                     <Plus className="h-5 w-5" />
                     New Contributions
                   </h3>
                   
+                  {/* Offensive Coverage */}
                   {analysis.newStabCoverage.size > 0 && (
                     <div className="mb-3">
-                      <p className="text-sm text-gray-400 mb-2">Guaranteed Coverage (STAB):</p>
+                      <p className="text-sm text-gray-400 mb-2">New Guaranteed Coverage (STAB):</p>
                       <div className="flex flex-wrap gap-2">
                         {Array.from(analysis.newStabCoverage).map(type => (
                           <TypeBadge key={type} type={type} small />
@@ -2912,7 +3237,7 @@ const PokemonTeamAnalyzer = ({
                   )}
 
                   {analysis.newPotentialCoverage.size > 0 && (
-                    <div>
+                    <div className="mb-3">
                       <p className="text-sm text-gray-400 mb-2">
                         Potential Coverage (via Moves):
                         <span className="text-xs ml-2 text-gray-500">
@@ -2922,6 +3247,35 @@ const PokemonTeamAnalyzer = ({
                       <div className="flex flex-wrap gap-2 opacity-75">
                         {Array.from(analysis.newPotentialCoverage).map(type => (
                           <TypeBadge key={type} type={type} small />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Defensive Coverage */}
+                  {analysis.newResistances.size > 0 && (
+                    <div className="mb-3">
+                      <p className="text-sm text-gray-400 mb-2">New Resistances:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from(analysis.newResistances).map(type => (
+                          <div key={type} className="flex items-center gap-1 bg-gray-600/50 rounded-lg px-2 py-1">
+                            <TypeBadge type={type} small />
+                            <span className="text-sm text-gray-300">½×</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {analysis.newImmunities.size > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-400 mb-2">New Immunities:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from(analysis.newImmunities).map(type => (
+                          <div key={type} className="flex items-center gap-1 bg-gray-600/50 rounded-lg px-2 py-1">
+                            <TypeBadge type={type} small />
+                            <span className="text-sm text-gray-300">0×</span>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -3136,11 +3490,17 @@ const TeamRecommendations = ({ team, TypeChart }) => {
 
           // Track defensive matchups
           Object.entries(TypeChart).forEach(([type, info]) => {
+            // Check if this type is super effective against our type
             if (info.strengths.includes(attackingType)) {
               weaknesses.add(type);
             }
-            if (info.weaknesses.includes(attackingType)) {
+            // Check if our type resists this type
+            if (TypeChart[attackingType].resistances.includes(type)) {
               resistances.add(type);
+            }
+            // Check if our type is immune to this type
+            if (TypeChart[attackingType].immunities.includes(type)) {
+              resistances.add(type); // Add immunities to resistances for recommendation purposes
             }
           });
         }
@@ -3169,38 +3529,69 @@ const TeamRecommendations = ({ team, TypeChart }) => {
     );
 
     // Find common weaknesses (types that multiple Pokémon are weak to)
-    const commonWeaknesses = Array.from(weaknesses).filter(type => 
-      team.filter(p => p.types.some(t => 
-        TypeChart[type]?.strengths.includes(t)
-      )).length >= 2
-    );
-
-    // Calculate recommended types to add
-    const recommendedTypes = allTypes.filter(type => {
-      if (team.some(p => p.types.includes(type))) return false; // Skip types we already have
-      
-      let score = 0;
-      
-      // Add points if this type:
-      // 1. Covers our missing coverage
-      if (TypeChart[type]) {
-        TypeChart[type].strengths.forEach(strength => {
-          if (missingCoverage.includes(strength)) score += 2;
-        });
-      }
-      
-      // 2. Resists our common weaknesses
-      commonWeaknesses.forEach(weakness => {
-        if (TypeChart[weakness]?.weaknesses.includes(type)) score += 3;
-      });
-      
-      // 3. Provides resistance to types we're commonly weak against
-      Array.from(weaknesses).forEach(weakness => {
-        if (TypeChart[weakness]?.weaknesses.includes(type)) score += 1;
-      });
-
-      return score >= 3; // Only recommend types that would be significantly helpful
+    const commonWeaknesses = Array.from(weaknesses).filter(type => {
+      const vulnerablePokemon = team.filter(p => 
+        p.types.some(t => {
+          // Pokemon is vulnerable if the attacking type is super effective
+          // AND the Pokemon's type doesn't resist or isn't immune to it
+          return TypeChart[type]?.strengths.includes(t) &&
+                 !TypeChart[t]?.resistances.includes(type) &&
+                 !TypeChart[t]?.immunities.includes(type);
+        })
+      );
+      return vulnerablePokemon.length >= 2;
     });
+
+    // Calculate recommended types with detailed scoring
+    const recommendedTypes = allTypes
+      .map(type => {
+        if (team.some(p => p.types.includes(type))) return null; // Skip types we already have
+        
+        let score = 0;
+        const newCoverage = new Set();
+        const newResistances = new Set();
+        
+        // Check new coverage this type would bring
+        if (TypeChart[type]) {
+          TypeChart[type].strengths.forEach(strength => {
+            if (!stabCoverage.has(strength) && !potentialCoverage.has(strength)) {
+              score += 3;
+              newCoverage.add(strength);
+            }
+          });
+        }
+
+        // Check new resistances and immunities this type would bring
+        const defensiveContributions = new Set([
+          ...TypeChart[type].resistances,
+          ...TypeChart[type].immunities
+        ]);
+        
+        defensiveContributions.forEach(defType => {
+          if (!resistances.has(defType)) {
+            score += 4;
+            newResistances.add(defType);
+          }
+        });
+        
+        // Additional score for covering team weaknesses
+        commonWeaknesses.forEach(weakness => {
+          if ((TypeChart[type].resistances.includes(weakness) || 
+               TypeChart[type].immunities.includes(weakness)) &&
+              !resistances.has(weakness)) {
+            score += 2;
+          }
+        });
+
+        return score >= 3 ? {
+          type,
+          score,
+          coverageCount: newCoverage.size,
+          resistanceCount: newResistances.size
+        } : null;
+      })
+      .filter(Boolean) // Remove null entries
+      .sort((a, b) => b.score - a.score); // Sort by score descending
 
     // Analyze stat distribution
     const avgStats = Object.entries(statsDistribution).map(([stat, total]) => ({
@@ -3256,11 +3647,18 @@ const TeamRecommendations = ({ team, TypeChart }) => {
           </h3>
           <div className="bg-gray-700/50 rounded-lg p-3">
             <p className="text-sm text-gray-400 mb-2">
-              Consider adding Pokémon of these types to strengthen your team:
+              Types ranked by new coverage (C) and resistances (R):
             </p>
             <div className="flex flex-wrap gap-2">
-              {analysis.recommendedTypes.map(type => (
-                <TypeBadge key={type} type={type} />
+              {analysis.recommendedTypes.map(({ type, coverageCount, resistanceCount }) => (
+                <div key={type} className="flex items-center gap-2 bg-gray-600/50 rounded-lg px-2 py-1">
+                  <TypeBadge type={type} small />
+                  <span className="text-sm text-gray-400">
+                    {coverageCount > 0 && `C:${coverageCount}`}
+                    {coverageCount > 0 && resistanceCount > 0 && ' '}
+                    {resistanceCount > 0 && `R:${resistanceCount}`}
+                  </span>
+                </div>
               ))}
             </div>
           </div>

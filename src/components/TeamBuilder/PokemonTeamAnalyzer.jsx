@@ -390,7 +390,7 @@ const PokemonTeamAnalyzer = ({
               )}
 
               {/* Add/Replace Button */}
-              <button
+              {/* <button
                 onClick={handleAddPokemon}
                 disabled={team.length === 6 && !analysis.replacementSuggestions.length}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 
@@ -402,7 +402,7 @@ const PokemonTeamAnalyzer = ({
                   : analysis.replacementSuggestions.length > 0 
                     ? 'Replace Suggested Pokémon'
                     : 'Team is Full'}
-              </button>
+              </button> */}
             </>
           )}
         </div>
