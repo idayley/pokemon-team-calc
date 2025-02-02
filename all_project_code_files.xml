@@ -1261,6 +1261,40 @@ const STORAGE_KEYS = {
   LAST_UPDATED: 'last-updated'
 };
 
+const fetchEvolutionData = async (pokemon) => {
+  try {
+    // Get species data which contains evolution chain URL
+    const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.name}`);
+    const speciesData = await speciesResponse.json();
+    
+    // Fetch evolution chain data
+    const evolutionResponse = await fetch(speciesData.evolution_chain.url);
+    const evolutionData = await evolutionResponse.json();
+    
+    // Helper function to extract evolution chain
+    const getEvolutionChain = (chain) => {
+      const evolutions = [chain.species.name];
+      let currentChain = chain;
+      
+      while (currentChain.evolves_to.length > 0) {
+        // Get the first evolution path (most common)
+        currentChain = currentChain.evolves_to[0];
+        evolutions.push(currentChain.species.name);
+      }
+      
+      return evolutions;
+    };
+    
+    const evolutionChain = getEvolutionChain(evolutionData.chain);
+    const currentIndex = evolutionChain.indexOf(pokemon.name);
+    return currentIndex < evolutionChain.length - 1 ? evolutionChain[currentIndex + 1] : null;
+    
+  } catch (error) {
+    console.error('Error fetching evolution data:', error);
+    return null;
+  }
+};
+
 const PokemonTeamCalculator = () => {
   const [team, setTeam] = useState([]);
   const [opponent, setOpponent] = useState(null);
@@ -1425,14 +1459,60 @@ const PokemonTeamCalculator = () => {
     }, { damage: 0 });
   }, [team, opponent, moveData, calculateDamage]);
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = async (result) => {
     if (!result.destination) return;
-    
-    const items = Array.from(team);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    
-    setTeam(items);
+  
+    const sourceIndex = result.source.index;
+    const pokemon = team[sourceIndex];
+  
+    // Handle dropping into trash
+    if (result.destination.droppableId === 'trash') {
+      setTeam(team.filter((_, index) => index !== sourceIndex));
+      return;
+    }
+  
+    // Handle dropping into evolution zone
+    if (result.destination.droppableId === 'evolution') {
+      setLoading(true);
+      try {
+        const nextEvolution = await fetchEvolutionData(pokemon);
+        
+        if (nextEvolution) {
+          // Fetch evolved Pokemon data
+          const evolvedResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvolution}`);
+          const evolvedPokemon = await evolvedResponse.json();
+          
+          // Replace the original Pokemon with its evolution
+          const newTeam = [...team];
+          newTeam[sourceIndex] = {
+            ...evolvedPokemon,
+            types: evolvedPokemon.types.map(t => t.type.name.toLowerCase())
+          };
+          setTeam(newTeam);
+        } else {
+          // No evolution available, just add the original back
+          const newTeam = [...team];
+          newTeam[sourceIndex] = pokemon;
+          setTeam(newTeam);
+        }
+      } catch (error) {
+        console.error('Error evolving Pokemon:', error);
+        // In case of error, keep the original Pokemon
+        const newTeam = [...team];
+        newTeam[sourceIndex] = pokemon;
+        setTeam(newTeam);
+      }
+      setLoading(false);
+      return;
+    }
+  
+    // Handle reordering within team
+    if (result.destination.droppableId === 'team') {
+      const items = Array.from(team);
+      const [reorderedItem] = items.splice(sourceIndex, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      setTeam(items);
+    }
   };
 
   return (
@@ -2804,6 +2884,39 @@ export default TypeBadge;
   </file_entry>
 
   <file_entry>
+    <file_path>src\components\TeamBuilder\EvolutionZone.jsx</file_path>
+    <file_name>EvolutionZone.jsx</file_name>
+    <content>
+    <![CDATA[
+import React from 'react';
+import { ArrowUpCircle } from 'lucide-react';
+
+const EvolutionZone = ({ isDraggingOver }) => {
+  return (
+    <div className={`flex items-center justify-center h-20 border-2 border-dashed 
+                   rounded-xl transition-colors ${
+      isDraggingOver 
+        ? 'border-blue-500 bg-blue-500/10' 
+        : 'border-gray-700 bg-gray-800/50'
+    }`}>
+      <div className="flex items-center gap-2 text-gray-400">
+        <ArrowUpCircle className={`w-6 h-6 ${
+          isDraggingOver ? 'text-blue-500' : 'text-gray-500'
+        }`} />
+        <span className={isDraggingOver ? 'text-blue-500' : ''}>
+          Drop to evolve Pokémon
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export default EvolutionZone;
+    ]]>
+    </content>
+  </file_entry>
+
+  <file_entry>
     <file_path>src\components\TeamBuilder\PokemonCard.jsx</file_path>
     <file_name>PokemonCard.jsx</file_name>
     <content>
@@ -2871,8 +2984,7 @@ const getTopStats = (stats) => {
     .slice(0, 2);
 };
 
-// Updated PokemonCard component
-const PokemonCard = ({ pokemon, index, onClick, onRemove }) => {
+const PokemonCard = ({ pokemon, index, onClick }) => {
   const topStats = getTopStats(pokemon.stats);
 
   return (
@@ -2888,18 +3000,6 @@ const PokemonCard = ({ pokemon, index, onClick, onRemove }) => {
             ${snapshot.isDragging ? 'shadow-lg ring-2 ring-blue-400' : ''}
           `}
         >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove(pokemon.id);
-            }}
-            className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 
-                     text-white rounded-full p-1 z-10 opacity-0 group-hover:opacity-100 
-                     transition-opacity shadow-lg"
-          >
-            <X size={16} />
-          </button>
-
           <div 
             className="p-3"
             onClick={() => onClick(pokemon)}
@@ -3337,7 +3437,7 @@ const PokemonTeamAnalyzer = ({
               )}
 
               {/* Add/Replace Button */}
-              <button
+              {/* <button
                 onClick={handleAddPokemon}
                 disabled={team.length === 6 && !analysis.replacementSuggestions.length}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 
@@ -3349,7 +3449,7 @@ const PokemonTeamAnalyzer = ({
                   : analysis.replacementSuggestions.length > 0 
                     ? 'Replace Suggested Pokémon'
                     : 'Team is Full'}
-              </button>
+              </button> */}
             </>
           )}
         </div>
@@ -3369,8 +3469,10 @@ export default PokemonTeamAnalyzer;
     <content>
     <![CDATA[
 import { Droppable } from 'react-beautiful-dnd';
+import { Trash2 } from 'lucide-react';
 import SearchInput from '../Shared/SearchInput';
 import { PokemonCard } from './PokemonCard';
+import EvolutionZone from './EvolutionZone';
 
 const TeamBuilder = ({ 
   team, 
@@ -3383,10 +3485,6 @@ const TeamBuilder = ({
   searchPokemon,
   setSearchResults
 }) => {
-  const handleRemovePokemon = (pokemonId) => {
-    setTeam(currentTeam => currentTeam.filter(pokemon => pokemon.id !== pokemonId));
-  };
-
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -3411,37 +3509,80 @@ const TeamBuilder = ({
         />
       </div>
 
-      <Droppable droppableId="team" direction="horizontal">
-        {(provided, snapshot) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 min-h-[160px] ${
-              snapshot.isDraggingOver ? 'bg-gray-700/50' : ''
-            } rounded-lg p-2`}
-          >
-            {team.map((pokemon, index) => (
-              <PokemonCard
-                key={pokemon.id}
-                pokemon={pokemon}
-                index={index}
-                onClick={setSelectedPokemon}
-                onRemove={handleRemovePokemon}
-              />
-            ))}
-            {team.length < 6 && [...Array(6 - team.length)].map((_, i) => (
+      <div className="flex flex-col gap-4">
+        <Droppable droppableId="team" direction="horizontal">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 min-h-[160px] ${
+                snapshot.isDraggingOver ? 'bg-gray-700/50' : ''
+              } rounded-lg p-2`}
+            >
+              {team.map((pokemon, index) => (
+                <PokemonCard
+                  key={pokemon.id}
+                  pokemon={pokemon}
+                  index={index}
+                  onClick={setSelectedPokemon}
+                />
+              ))}
+              {team.length < 6 && [...Array(6 - team.length)].map((_, i) => (
+                <div
+                  key={`empty-${i}`}
+                  className="border-2 border-dashed border-gray-700 rounded-xl h-[160px] 
+                           flex items-center justify-center bg-gray-800/50"
+                >
+                  <span className="text-gray-500">Empty Slot</span>
+                </div>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+
+        {/* Action Zones */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Evolution Zone */}
+          <Droppable droppableId="evolution">
+            {(provided, snapshot) => (
               <div
-                key={`empty-${i}`}
-                className="border-2 border-dashed border-gray-700 rounded-xl h-[160px] 
-                         flex items-center justify-center bg-gray-800/50"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
               >
-                <span className="text-gray-500">Empty Slot</span>
+                <EvolutionZone isDraggingOver={snapshot.isDraggingOver} />
+                {provided.placeholder}
               </div>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+            )}
+          </Droppable>
+
+          {/* Trash Zone */}
+          <Droppable droppableId="trash">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className={`flex items-center justify-center h-20 border-2 border-dashed 
+                           rounded-xl transition-colors ${
+                  snapshot.isDraggingOver 
+                    ? 'border-red-500 bg-red-500/10' 
+                    : 'border-gray-700 bg-gray-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-2 text-gray-400">
+                  <Trash2 className={`w-6 h-6 ${
+                    snapshot.isDraggingOver ? 'text-red-500' : 'text-gray-500'
+                  }`} />
+                  <span className={snapshot.isDraggingOver ? 'text-red-500' : ''}>
+                    Drop here to remove Pokémon
+                  </span>
+                </div>
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
+      </div>
     </div>
   );
 };

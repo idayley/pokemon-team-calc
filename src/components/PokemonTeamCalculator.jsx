@@ -31,6 +31,40 @@ const STORAGE_KEYS = {
   LAST_UPDATED: 'last-updated'
 };
 
+const fetchEvolutionData = async (pokemon) => {
+  try {
+    // Get species data which contains evolution chain URL
+    const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.name}`);
+    const speciesData = await speciesResponse.json();
+    
+    // Fetch evolution chain data
+    const evolutionResponse = await fetch(speciesData.evolution_chain.url);
+    const evolutionData = await evolutionResponse.json();
+    
+    // Helper function to extract evolution chain
+    const getEvolutionChain = (chain) => {
+      const evolutions = [chain.species.name];
+      let currentChain = chain;
+      
+      while (currentChain.evolves_to.length > 0) {
+        // Get the first evolution path (most common)
+        currentChain = currentChain.evolves_to[0];
+        evolutions.push(currentChain.species.name);
+      }
+      
+      return evolutions;
+    };
+    
+    const evolutionChain = getEvolutionChain(evolutionData.chain);
+    const currentIndex = evolutionChain.indexOf(pokemon.name);
+    return currentIndex < evolutionChain.length - 1 ? evolutionChain[currentIndex + 1] : null;
+    
+  } catch (error) {
+    console.error('Error fetching evolution data:', error);
+    return null;
+  }
+};
+
 const PokemonTeamCalculator = () => {
   const [team, setTeam] = useState([]);
   const [opponent, setOpponent] = useState(null);
@@ -195,19 +229,57 @@ const PokemonTeamCalculator = () => {
     }, { damage: 0 });
   }, [team, opponent, moveData, calculateDamage]);
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = async (result) => {
     if (!result.destination) return;
+  
+    const sourceIndex = result.source.index;
+    const pokemon = team[sourceIndex];
   
     // Handle dropping into trash
     if (result.destination.droppableId === 'trash') {
-      setTeam(team.filter((_, index) => index !== result.source.index));
+      setTeam(team.filter((_, index) => index !== sourceIndex));
+      return;
+    }
+  
+    // Handle dropping into evolution zone
+    if (result.destination.droppableId === 'evolution') {
+      setLoading(true);
+      try {
+        const nextEvolution = await fetchEvolutionData(pokemon);
+        
+        if (nextEvolution) {
+          // Fetch evolved Pokemon data
+          const evolvedResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvolution}`);
+          const evolvedPokemon = await evolvedResponse.json();
+          
+          // Replace the original Pokemon with its evolution
+          const newTeam = [...team];
+          newTeam[sourceIndex] = {
+            ...evolvedPokemon,
+            types: evolvedPokemon.types.map(t => t.type.name.toLowerCase())
+          };
+          setTeam(newTeam);
+        } else {
+          // No evolution available, just add the original back
+          const newTeam = [...team];
+          newTeam[sourceIndex] = pokemon;
+          setTeam(newTeam);
+        }
+      } catch (error) {
+        console.error('Error evolving Pokemon:', error);
+        // In case of error, keep the original Pokemon
+        const newTeam = [...team];
+        newTeam[sourceIndex] = pokemon;
+        setTeam(newTeam);
+      }
+      setLoading(false);
       return;
     }
   
     // Handle reordering within team
     if (result.destination.droppableId === 'team') {
       const items = Array.from(team);
-      const [reorderedItem] = items.splice(result.source.index, 1);
+      const [reorderedItem] = items.splice(sourceIndex, 1);
       items.splice(result.destination.index, 0, reorderedItem);
       setTeam(items);
     }
